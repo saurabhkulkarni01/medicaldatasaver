@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+	<style type="text/css">
+		/* input,select{
+			width: 300px!important;
+			border-radius: 0px!important;
+		}
+		form{
+			margin: 120px auto;
+			width: 300px;
+			height: 450px;
+			text-align: center;
+		}
+		select{
+			height:30px;
+		}
+		button{
+			width: 140px;
+			border-radius: 0px!important;
+		}
+		*, *:before, *:after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+} */
+
+body {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  background: #ededed;
+}
+
+input, button {
+  border: none;
+  outline: none;
+  background: none;
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+}
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Montserrat, sans-serif;
+}
+
+.fullscreen-container {
+  background: #e7ebfb;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  padding: 70px 40px;
+  border-radius: 25px;
+  background: #fafafa;
+  box-shadow: 3px 5px 25px #888888;
+  width: 80%;
+  max-width: 500px;
+}
+
+h1 {
+  text-align: center;
+  color: #98aae4;
+}
+
+.form {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+}
+
+.input-group input {
+  font-size: 1.1rem;
+  padding: 8px;
+  text-align: center;
+  background: hsl(264, 45%, 94%, 0.7);
+  color: #c4c9e9;
+  border: none;
+  outline: none;
+  border-radius: 25px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+input::placeholder {
+  color: #c4c4e9;
+  font-weight: bold;
+}
+
+.input-group input:focus {
+  box-shadow: 0 0 0 2px #D1C4E9;
+}
+
+button {
+  cursor: pointer;
+  font-size: .9rem;
+  margin: 10px auto 0;
+  padding: 12px 5px;
+  width: 35%;
+  border-radius: 100px;
+  border: none;
+  outline: none;
+  color: white;
+  background: linear-gradient(90deg, rgb(100, 163, 239) 0%, rgb(88, 141, 255) 71%);
+}
+
+button:focus,
+button:hover {
+  box-shadow: 0 0 0 2px #D1C4E9;
+}
+
+
+
+
+
+	</style>
+</head>
+<body>
+  {% include "nav.html" %}
+
+<!-- Form -->
+
+<div class="container">
+<div class="row">
+	<div class="fullscreen-container">
+		<div class="login-container">
+			<h1>Login</h1>
+<form action="/login" method="POST">
+	{% csrf_token %}
+	<div class="form-group" >
+		<input class="input-username" id="text" type="text" name="username" placeholder="Userame" required="" class="form-control"><br><br>
+	</div>
+ 
+	<div class="form-group" >
+		<input class="input-password" id="password" type="password"  name="pass1" placeholder="Password" required="" class="form-control"><br><br>
+	</div>  
+  <button type="submit" class="">Submit</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+
+
+<!--JS Library -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" ></script>
+</body>
+</html>

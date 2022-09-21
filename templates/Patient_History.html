@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Patient History</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+	<style type="text/css">
+		.container{
+			margin-top: 2%;
+			background-image: url( 'https://img.freepik.com/premium-vector/medical-insurance-doctor-s-appointment-examination-medical-history-healthcare_501173-380.jpg?w=2000' );
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		.containerr{
+			margin-top: 2%;
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		input,select{
+			width: 300px!important;
+			border-radius: 0px!important;
+		}
+		.form{
+			margin: 10px auto;
+			width: auto;
+			height: auto;
+			text-align: center;
+		}
+		select{
+			height:30px;
+		}
+		button{
+			width: 140px;
+			border-radius: 0px!important;
+		}
+
+.login-container{
+  width: 640px;
+  height: 400px;
+  display: flex;
+}
+.field-text{
+	font-size: 7px;
+  color: #a7a7a7;
+}
+
+
+
+.container{
+	box-shadow: 0 0 10px 5px;
+	border-radius: 15px;
+}
+.containerr{
+	box-shadow: 0 0 1px 1px;
+	border-radius: 15px;
+}
+
+
+
+
+	</style>
+</head>
+<body>
+
+
+  {% include "nav.html" %}
+  <div class="containerr" style="background-image:'' ;">
+	<div class="row" style="margin-left:30%;">
+		<div class="form" >
+ <p>Name: {{patient.name}}</p>
+ <p>Mobile No: {{patient.phone}}</p>
+ <p>Email: {{patient.email}}</p><p>Address: {{patient.address}}</p>
+ <p>Gender: {{patient.gender}}</p>
+ 
+ <p>Age: {{patient.age}}</p>
+ <p>Blood Gruop: {{patient.blood}}</p>
+ <p>Case: {{patient.case}}</p>
+ <p>Date of Birth: {{patient.DOB}}</p>
+ <p>Disability: {{patient.disability}}</p>
+</div>
+</div>
+</div>
+ <h3 style="font-weight: 700; margin: auto ;" >Past Appointment Data</h3><br>
+ 
+	
+
+
+ {% for appointment in data %}
+ 
+ <div class="container">
+	<div class="row" style="margin-left:55%;">
+		<div class="form" >
+		<h5 style="font-weight: 700;" >{{appointment.prescripted_date}}</h5><br>
+		 <span class="form-control">symptoms : {{appointment.symptoms}}</span><br>
+		 <span class="form-control">prescription : {{appointment.prescription}}</span><br>
+		 <span class="form-control">note : {{appointment.note}}</span><br>
+		 <span class="form-control">Pulse Rate : {{appointment.pulse_rate}}</span><br>
+		 <span class="form-control">blood_pressure : {{appointment.blood_pressure}}</span><br>
+		 <span class="form-control">Weight : {{appointment.weight}}</span><br>
+		 <hr style="height: 2px;" ><br>
+	  </div>
+	  </div>
+	  </div>
+
+	</div>
+	</div>
+
+{% endfor %}
+</div>
+</div>
+
+
+
+
+
+
+<!--JS Library -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" ></script>
+</body>
+</html>

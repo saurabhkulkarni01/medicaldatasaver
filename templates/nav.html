@@ -1,0 +1,66 @@
+<style>
+ nav{
+  position: fixed; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+  width: 100%; /* Full width */
+ }
+</style>
+<nav class="navbar navbar-expand-lg navbar-light bg-primary">
+  <a class="navbar-brand text-light" href="#">MedHistory</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav ml-auto">
+      {% if user == None %}
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+      {% else %}
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'dashboard' user=user %}">Home <span class="sr-only">(current)</span></a>
+      </li>
+     {% endif %}
+      {% if not status %}
+       <li class="nav-item active">
+        <a class="nav-link text-light" href="/register">Register <span class="sr-only">(current)</span></a>
+      </li>
+       <li class="nav-item active">
+        <a class="nav-link text-light" href="/login">Login <span class="sr-only">(current)</span></a>
+      </li>
+      {% endif %}
+      {% if status and user == "P" %}
+<li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'myappointment' %}">Your Appointments <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'create_appointment' user=user %}">Book Appointment<span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'profile' user=user %}">Profile <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'medical_history'  %}">Medical History <span class="sr-only">(current)</span></a>
+      </li>
+       <li class="nav-item active">
+        <a class="nav-link text-light" href="/logout">Logout <span class="sr-only">(current)</span></a>
+      </li>
+
+      {% endif %}
+            {% if status and user == "D" %}
+<li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'docter_appointment'  %}"> Appointments <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'docter_prescription'  %}">Prescriptions <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'profile' user=user %}">Profile <span class="sr-only">(current)</span></a>
+      </li>
+     <li class="nav-item active">
+        <a class="nav-link text-light" href="/logout">Logout <span class="sr-only">(current)</span></a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

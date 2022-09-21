@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Home</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+	<style type="text/css">
+		.container {
+			margin-top: 70px;
+		}
+		img{
+			width: 100%;
+			height: auto;
+		}
+		h2{
+			padding-top: 50px;
+		}
+		p{
+			font-size: 17px!important;
+		}
+	</style>
+</head>
+<body>
+
+  {% include "nav.html" %}
+<div class="container">
+	<div class="row">
+	 <div class="col-sm-6 ">
+{% load static %}
+<img src="{% static './home.png' %}" alt="My image">
+  </div>
+		<div class="col"-sm-6>
+			<h2>Welcome To Medical history saver</h2>
+			<p class="lead">Hello Users !</p>
+			<p class="lead"> We , the students of IIT Kharagpur , are trying to build platform for saving patient's medical history, channel to share the past medical records to doctors and doctor's appointment booking and reminder system !</p>	
+			<p class="lead"> We are doing this project as out BTP under guidance of Prof. Ram Babu Roy </p>	
+			{% if status and user == "P" %}
+		<button class="button btn-lg button-primary btn-primary">Add Past Record</button>
+{% endif %}
+		</div>
+
+	
+<div>
+	
+	<!-- {% if status and user == "P" %}
+<a href="{% url 'create_appointment' user=user %}" class="btn btn-primary" id="hello">Create Appointment</a>
+{% endif %} -->
+</div>
+
+
+
+
+<!--JS Library -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" ></script>
+</body>
+</html>
