@@ -22,9 +22,11 @@ from datetime import time
 import datetime
 # Create your views here.
 def home(request):
-	return render(request , 'home.html',{"user":None})
+	specs = Specialization.objects.all()
+	return render(request , 'home.html',{"user":None , "specs":specs})
 
 def register(request) :
+	specs = Specialization.objects.all()
 	if request.method == 'POST':
 		print(request.POST['name'])
 		print(request.POST['post'])
@@ -41,52 +43,52 @@ def register(request) :
 				c_patient = Invoice(patient = new , outstanding = 0 , paid = 0)
 				c_patient.save()
 
-				return render(request , 'home.html',{"user":None})
+				return render(request , 'home.html',{"user":None, "specs":specs})
 			else:
 				new = Docter(phone=request.POST['phone'],name=request.POST['name'],email=request.POST['email'],username=user)	
 				new.save()	
-				return render(request , 'home.html',{"user":None})
+				return render(request , 'home.html',{"user":None, "specs":specs})
 	
 			print('Registered Successfully')
 			return render(request,'register.html')
 	else:
-			return render(request,'register.html')
+			specs = Specialization.objects.all()
+			return render(request,'register.html',specs=specs)
 
 
 # Login
 def login(request):
+	specs = Specialization.objects.all()
 	if request.method == 'POST':
 		try:
  			# Check User in DB
-	 		uname = request.POST['username']
+	 		
 			pwd = request.POST['pass1']
+			uname = request.POST['username']
 	 		
 			user_authenticate = auth.authenticate(username=uname,password=pwd)
 			
 			if user_authenticate != None:
-	 			user = User.objects.get(username=uname)
-	 			try:
-	 				data = Patient.objects.get(username = user)
-	 				print(data)
-	 				print('Patient has been Logged')
-	 				auth.login(request,user_authenticate)				
-	 				return redirect('dashboard',user= "P")
-	 			except:
-	 				try:
-	 					data = Docter.objects.get(username = user )
-	 					auth.login(request,user_authenticate)				
-	 					print('Docter has been Logged')
-	 					return redirect('dashboard',user = "D")	 					
-	 				except:
-	 					return redirect('/')
-
-		 					
-	 					
-	 		else:
-	 			print('Login Failed')
-	 			return render(request,'login.html')
+				user = User.objects.get(username=uname)
+				try:
+					data = Patient.objects.get(username = user)
+					print(data)
+					print('Patient has been Logged')
+					auth.login(request,user_authenticate)				
+					return redirect('dashboard',user= "P")
+				except:
+					try:
+						data = Docter.objects.get(username = user )
+						auth.login(request,user_authenticate)				
+						print('Docter has been Logged')
+						return redirect('dashboard',user = "D")	 					
+					except:
+						return redirect('/')			
+			else:
+				print('Login Failed')
+				return render(request,'login.html')
 		except:
-	 		return render(request,'login.html')
+			return render(request,'login.html')
 	return render(request , 'login.html')
 
 # Logout
@@ -96,7 +98,16 @@ def logout(request):
 	return redirect('/login')
 
 
-
+def findSpecs(request):
+	specs = Specialization.objects.all()
+	if request.method == "POST":
+		spcname = request.POST['specs']
+		specialization = Specialization.objects.get(name = spcname)
+		doctors = Docter.objects.filter( specialization = specialization )
+		print(spcname, doctors)
+		return render(request,'doctorlist.html',{"user" : "P", "doctors": doctors, "specialization": specialization})
+		# return render(request,'register.html',specs=specs)
+	return redirect('/')
 
 # Profile
 def profile(request, user):
@@ -159,13 +170,14 @@ def profile(request, user):
 
 def dashboard(request , user):
 	print(user)
+	specs= Specialization.objects.all()
 	status = False
 	if request.user:
 		status = request.user
 	if user == "AnonymousUser":
 		return redirect('home')
 	
-	return render(request , 'home.html', {'user':user, "status": status})
+	return render(request , 'home.html', {'user':user, "status": status, "specs":specs})
 
 
 
@@ -222,6 +234,7 @@ def delete_patient(request , id ):
 # Create Patient => Receptionist
 def create_patient(request):
 	status = False
+	specs = Specialization.objects.all()
 	if request.user:
 		status = request.user
 	if request.method =="POST":
@@ -246,7 +259,7 @@ def create_patient(request):
 
 			c_patient = Invoice(patient = new , outstanding = request.POST['outstanding'] , paid = request.POST['paid'])
 			c_patient.save()
-			return render(request , 'home.html', {'user':user, "status": status})
+			return render(request , 'home.html', {'user':user, "status": status, "specs":specs})
 			
 
 	return render(request , 'home.html', {'user':user, "status": status})
@@ -379,6 +392,7 @@ def med_history(request , id):
 # Upadate Status
 def update_status(request  , id):
 	print(id)
+	specs = Specialization.objects.all();
 	status = False
 	if request.user:
 		status = request.user
@@ -394,13 +408,14 @@ def update_status(request  , id):
 		print()
 	data.status = 1
 	data.save()
-	return redirect('home' )
+	return redirect('home',{"specs":specs} )
 
 
 
 	# => Docter Update
 def update_docter(request , id):
 	status = False
+	specs = Specialization.objects.all()
 	if request.user:
 		status = request.user
 	if request.method == "POST":
@@ -417,7 +432,7 @@ def update_docter(request , id):
 		update.status = request.POST['status']
 		update.attendance = request.POST['attendance']
 		update.save()
-		return redirect('home')
+		return redirect('home', {"specs":specs})
 	data = Docter.objects.get(id= id)
 	return render(request , 'update_docter.html' , {"userdata" : data , 'user' : "H" , 'status' : status})
 
@@ -449,9 +464,10 @@ def patient_invoice(request):
 # About 
 def about(request):
 	status = False
+	specs = Specialization.objects.all()
 	if request.user:
 		status = request.user
-	return render(request , 'about.html' )
+	return render(request , 'about.html' , {"specs":specs})
 
 
 

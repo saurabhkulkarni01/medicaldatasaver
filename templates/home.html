@@ -42,12 +42,26 @@
 	
 <div>
 	
-	<!-- {% if status and user == "P" %}
-<a href="{% url 'create_appointment' user=user %}" class="btn btn-primary" id="hello">Create Appointment</a>
-{% endif %} -->
+
 </div>
+<div class="container">
+	{% if status and user == "P" %}
+<form action="/findSpecs" method="POST">
+	{% csrf_token %}
+	
+		<select name="specs">
+			{% for i in specs %}
+			<option value={{i.name}}>{{ i.name }}      </option>
+			{% endfor %}
+		</select><br><br>
+	
+ 
+	
+  <button type="submit" class="">Submit</button>
+</form>
+{% endif %}
 
-
+</div>
 
 
 <!--JS Library -->

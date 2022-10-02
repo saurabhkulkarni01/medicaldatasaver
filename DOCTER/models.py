@@ -1,3 +1,5 @@
+from asyncio.windows_events import NULL
+from statistics import mode
 from django.db import models
 from PATIENT.models import *
 from .models import *
@@ -6,9 +8,14 @@ from COMMON_APP.models import *
 from django.contrib.auth.models import User
 
 # Create your models here.
+
+class Specialization(models.Model):
+	name = models.CharField(max_length=80)
+
 class Docter(models.Model):
 	name = models.CharField(max_length=40)
 	phone = models.IntegerField(unique=True)
+	rating = models.FloatField()
 	email = models.EmailField(unique=True)
 	gender = models.CharField(max_length=30)
 	address = models.CharField(max_length=200)
@@ -17,13 +24,12 @@ class Docter(models.Model):
 	username = models.OneToOneField(User,on_delete = models.CASCADE)
 	status = models.BooleanField(default = 0)
 	category = models.CharField(max_length=20)
-	specialization = models.CharField(max_length=20)
+	specialization = models.ForeignKey(Specialization,on_delete = models.CASCADE,unique = False, null=True, blank=True, default=NULL)
 	department = models.CharField(max_length=30 , default = "")
 	attendance = models.IntegerField(default = 0)
 	salary = models.IntegerField(default = 10000)
+
 	
-
-
 	
 # Prescription Model
 class medreport(models.Model):

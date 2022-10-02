@@ -11,6 +11,7 @@ urlpatterns = [
     path('register', register , name = 'register' ),
     path('login', login , name = 'login' ),
     path('about', about , name = 'about' ),
+    path('findSpecs', findSpecs, name = 'findSpecs' ),
 
     path('logout', logout , name = 'logout' ),
     path('profile/(?P<user>.*)/$', profile , name = 'profile' ),

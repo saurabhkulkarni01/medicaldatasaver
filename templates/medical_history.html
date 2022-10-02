@@ -5,29 +5,114 @@
 	<title>Mediacal Prescrition</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
 	<style type="text/css">
-		nav{
+		.container{
+			margin-top: 2%;
+			background-image: url( 'https://img.freepik.com/premium-vector/medical-insurance-doctor-s-appointment-examination-medical-history-healthcare_501173-380.jpg?w=2000' );
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		.containerr{
+			margin-top: 2%;
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		input,select{
+			width: 300px!important;
+			border-radius: 0px!important;
+		}
+		.form{
+			margin: 10px auto;
+			width: auto;
+			height: auto;
+			text-align: center;
+		}
+		select{
+			height:30px;
+		}
+		button{
+			width: 140px;
+			border-radius: 0px!important;
+		}
+
+.login-container{
+  width: 640px;
+  height: 400px;
+  display: flex;
+}
+.field-text{
+	font-size: 7px;
+  color: #a7a7a7;
+}
+
+
+
+.container{
+	box-shadow: 0 0 10px 5px;
+	border-radius: 15px;
+}
+.containerr{
+	box-shadow: 0 0 1px 1px;
+	border-radius: 15px;
+}
+
+
+
+
+		/* nav{
 			margin-bottom: 20px;
 		}
 		.panel-body{
 			padding: 10px 12px;
-		}
+		} */
 
 	</style>
 	</head>
 <body>
  {% include "nav.html" %}
- <div class="container">
+ <!-- <div class="container"> -->
 
- 	<br><br>
- 
+ 	<!-- <br><br>
+	 <div class="container">
+		<div class="row" style="margin-left:55%;">
+			<div class="form" >
+			<h5 style="font-weight: 700;" >{{appointment.prescripted_date}}</h5><br>
+			 <span class="form-control">symptoms : {{appointment.symptoms}}</span><br>
+			 <span class="form-control">prescription : {{appointment.prescription}}</span><br>
+			 <span class="form-control">note : {{appointment.note}}</span><br>
+			 <span class="form-control">Pulse Rate : {{appointment.pulse_rate}}</span><br>
+			 <span class="form-control">blood_pressure : {{appointment.blood_pressure}}</span><br>
+			 <span class="form-control">Weight : {{appointment.weight}}</span><br>
+			 <hr style="height: 2px;" ><br>
+		  </div>
+		  </div>
+		  </div>
+	
+		</div>
+		</div> -->
+
+
  {% for i in data %}
- <div class="panel panel-default bg-success">
-  <div class="panel-body"><h3>{{ i.prescripted_date }}</h3>
-    <p>Symptoms : {{ i.symptoms}}</p>
-    <p>Prescription : {{ i.prescription }}</p>
+ <div class="container">
+	<div class="row" style="margin-left:55%;">
+		<div class="form" >
+ <!-- <div class="panel panel-default bg-success">
+  <div class="panel-body"><h3> -->
+	{{ i.prescripted_date }}</h3>
+    <span class="form-control">Symptoms : {{ i.symptoms}}</span><br>
+		<span class="form-control">Prescription : {{ i.prescription }}</span><br>
+		<span class="form-control">note : {{i.note}}</span><br>
+		 <span class="form-control">Pulse Rate : {{i.pulse_rate}}</span><br>
+		 <span class="form-control">blood_pressure : {{i.blood_pressure}}</span><br>
+		 <span class="form-control">Weight : {{i.weight}}</span><br>
 
   </div>
 </div><br>
+</div>
+</div>
+</div>
+
+</div>
+</div>
 {% endfor %}
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>

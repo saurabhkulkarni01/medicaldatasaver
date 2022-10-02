@@ -4,3 +4,4 @@ from django.contrib import admin
 from DOCTER.models import *
 admin.site.register(Docter)
 admin.site.register(Prescription2)
+admin.site.register(Specialization)
