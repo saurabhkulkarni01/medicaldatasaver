@@ -42,7 +42,7 @@
       <th scope="row">{{ data.email }}</th>
       <th scope="row">{{ specialization.name }}</th>
       <th scope="row">{{ data.rating }}</th>
-
+      <td><a href="{% url 'doctor_profile' id=data.id %}">Profile</a></td>
     </tr>
     {% endfor %}
    

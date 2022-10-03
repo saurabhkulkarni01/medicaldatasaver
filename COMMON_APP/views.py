@@ -45,15 +45,18 @@ def register(request) :
 
 				return render(request , 'home.html',{"user":None, "specs":specs})
 			else:
-				new = Docter(phone=request.POST['phone'],name=request.POST['name'],email=request.POST['email'],username=user)	
+				specsid = request.POST['specs']
+				spec= Specialization.objects.get(name=specsid)
+				new = Docter(phone=request.POST['phone'],name=request.POST['name'],email=request.POST['email'],username=user, specialization=spec)	
 				new.save()	
+				print(new)
 				return render(request , 'home.html',{"user":None, "specs":specs})
 	
 			print('Registered Successfully')
 			return render(request,'register.html')
 	else:
 			specs = Specialization.objects.all()
-			return render(request,'register.html',specs=specs)
+			return render(request,'register.html',{"specs": specs})
 
 
 # Login
@@ -89,7 +92,7 @@ def login(request):
 				return render(request,'login.html')
 		except:
 			return render(request,'login.html')
-	return render(request , 'login.html')
+	return render(request , 'login.html',{"specs":specs})
 
 # Logout
 def logout(request):
@@ -105,7 +108,7 @@ def findSpecs(request):
 		specialization = Specialization.objects.get(name = spcname)
 		doctors = Docter.objects.filter( specialization = specialization )
 		print(spcname, doctors)
-		return render(request,'doctorlist.html',{"user" : "P", "doctors": doctors, "specialization": specialization})
+		return render(request,'doctorlist.html',{"user" : "P", "doctors": doctors, "specialization": specialization,"status":True})
 		# return render(request,'register.html',specs=specs)
 	return redirect('/')
 
@@ -388,6 +391,16 @@ def med_history(request , id):
 	data = Prescription2.objects.filter(patient=patient).order_by('-prescripted_date')
 	print(patient,data)
 	return render(request , 'Patient_History.html',{"data":data , 'user' : "D" , 'status' : status, 'patient':patient})
+
+def doctor_profile(request , id):
+	status = True
+	if request.user:
+		status = request.user
+	doctor = Docter.objects.get(id=id)
+	review = Reviews.objects.filter(doctor = doctor)
+	userid = User.objects.get(username=request.user)
+	return render(request , 'specialized_doctor_profile.html',{"review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid})
+
 
 # Upadate Status
 def update_status(request  , id):

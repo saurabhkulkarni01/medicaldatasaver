@@ -20,6 +20,7 @@ urlpatterns = [
     path('delete_patient/(?P<id>\d+)/$', delete_patient , name = 'delete_patient'),
     path('update_patient/(?P<id>\d+)/$', update_patient , name = 'update_patient'),
     path('patient_history/(?P<id>\d+)/$', med_history , name = 'patient_history'),
+    path('doctor_profile/(?P<id>\d+)/$', doctor_profile , name = 'doctor_profile'),
     path('create_patient/', create_patient , name = 'create_patient'),
     path('myappointment/', myappointment , name = 'myappointment'),
     path('docter_appointment/', docter_appointment , name = 'docter_appointment'),

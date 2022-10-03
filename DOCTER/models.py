@@ -1,4 +1,5 @@
 from asyncio.windows_events import NULL
+from email.policy import default
 from statistics import mode
 from django.db import models
 from PATIENT.models import *
@@ -14,22 +15,27 @@ class Specialization(models.Model):
 
 class Docter(models.Model):
 	name = models.CharField(max_length=40)
-	phone = models.IntegerField(unique=True)
-	rating = models.FloatField()
-	email = models.EmailField(unique=True)
+	phone = models.IntegerField(unique=False)
+	rating = models.FloatField(default=0)
+	email = models.EmailField(unique=False)
 	gender = models.CharField(max_length=30)
 	address = models.CharField(max_length=200)
 	age = models.IntegerField(default= 0)
 	blood = models.CharField(max_length=10)
 	username = models.OneToOneField(User,on_delete = models.CASCADE)
 	status = models.BooleanField(default = 0)
+	average_fee = models.IntegerField(default=500)
 	category = models.CharField(max_length=20)
 	specialization = models.ForeignKey(Specialization,on_delete = models.CASCADE,unique = False, null=True, blank=True, default=NULL)
 	department = models.CharField(max_length=30 , default = "")
 	attendance = models.IntegerField(default = 0)
 	salary = models.IntegerField(default = 10000)
 
-	
+class Reviews(models.Model):
+	patient = models.ForeignKey(Patient, on_delete = models.CASCADE,unique = True, null=True, blank=True, default=NULL)
+	doctor = models.ForeignKey(Docter, on_delete = models.CASCADE,unique = True, null=True, blank=True, default=NULL)
+	review = models.TextField()
+	rating = models.IntegerField(max_length=2)
 	
 # Prescription Model
 class medreport(models.Model):

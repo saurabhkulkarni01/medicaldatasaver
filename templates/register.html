@@ -150,6 +150,12 @@ button:hover {
 	         <option style="color: #c4c4e9;font-weight: bold;" name="Patient">Patient</option>
 	         </select><br>
   </div>
+  <p align="left" style="color: #c4c4e9;font-weight: bold;">For Doctors</p>
+  <select style="color: #c4c4e9;font-weight: bold;" name="specs"   >
+    {% for j in specs %}
+    <option style="color: #c4c4e9;font-weight: bold;" value={{j.name}}>{{ j.name }}      </option>
+    {% endfor %}
+  </select><br><br>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 </div>

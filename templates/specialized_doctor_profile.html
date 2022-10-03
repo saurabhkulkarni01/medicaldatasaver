@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Patient History</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+	<style type="text/css">
+		.container{
+			margin-top: 2%;
+			background-image: url( 'https://img.freepik.com/premium-vector/medical-insurance-doctor-s-appointment-examination-medical-history-healthcare_501173-380.jpg?w=2000' );
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+        .containerr{
+			margin-top: 2%;
+			background-image: url('https://www.saaolpunjab.com/wp-content/uploads/2021/08/360_F_260796882_QyjDubhDDk0RZXV9z7XBEw9AKnWCizXy-2.jpg');
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		/* .containerr{
+			margin-top: 2%;
+			background-repeat: no-repeat;
+			background-size: contain;
+		} */
+		input,select{
+			width: 300px!important;
+			border-radius: 0px!important;
+		}
+		.form{
+			margin: 10px auto;
+			width: auto;
+			height: auto;
+			text-align: center;
+		}
+		select{
+			height:30px;
+		}
+		button{
+			width: 140px;
+			border-radius: 0px!important;
+		}
+
+.login-container{
+  width: 640px;
+  height: 400px;
+  display: flex;
+}
+.field-text{
+	font-size: 7px;
+  color: #a7a7a7;
+}
+
+
+
+.container{
+	box-shadow: 0 0 10px 5px;
+	border-radius: 15px;
+}
+.containerr{
+	box-shadow: 0 0 10px 5px;
+	border-radius: 15px;
+}
+
+
+
+
+	</style>
+</head>
+<body>
+
+<h1>{{User.id}}</h1>
+  {% include "nav.html" %}
+  <div class="container" style="background-image:'' ;">
+	<div class="row" style="margin-left:30%;">
+		<div class="form" >
+ <p>Name: {{doctor.name}}</p>
+ <p>Mobile No: {{doctor.phone}}</p>
+ <p>Email: {{doctor.email}}</p><p>Address: {{doctor.address}}</p>
+ <p>Gender: {{doctor.gender}}</p>
+ 
+ <p>Fee: {{doctor.average_fee}}</p>
+ <p>Specialization: {{doctor.specialization.name}} </p>
+</div>
+</div>
+</div>
+ <!--<h3 style="font-weight: 700; margin: auto ;" >Past Appointment Data</h3><br>
+ 
+	
+
+
+  {% for appointment in data %}
+ 
+ <div class="container">
+	<div class="row" style="margin-left:55%;">
+		<div class="form" >
+		<h5 style="font-weight: 700;" >{{appointment.prescripted_date}}</h5><br>
+		 <span class="form-control">symptoms : {{appointment.symptoms}}</span><br>
+		 <span class="form-control">prescription : {{appointment.prescription}}</span><br>
+		 <span class="form-control">note : {{appointment.note}}</span><br>
+		 <span class="form-control">Pulse Rate : {{appointment.pulse_rate}}</span><br>
+		 <span class="form-control">blood_pressure : {{appointment.blood_pressure}}</span><br>
+		 <span class="form-control">Weight : {{appointment.weight}}</span><br>
+		 <hr style="height: 2px;" ><br>
+	  </div>
+	  </div>
+	  </div>
+
+	</div>
+	</div>
+
+{% endfor %} -->
+</div>
+</div>
+
+<div class="containerr">
+<div class="row" style="margin-left:60%;">
+    <form action="{% url 'create_appointment' user=user %}" method="POST">
+        <h5 style="font-weight: 700;" >Book Your Appointment Now !!</h5><br>
+        {% csrf_token %}
+         <input type="date" name="date" placeholder="Date" required="" class="form-control"><br>
+         <input type="time" name="time" placeholder="time" required="" class="form-control"><br>
+         
+       <p align="left" style="display: none;">Docter Name</p>
+     <select name="docter" style="display: none;" >
+       
+           <option  value="{{ doctor.id }}">{{ doctor.id  }} ,  specialization: {{doctor.specialization}}  </option>
+             
+            </select><br>
+      <div class="form-group" >
+          <p align="left">Status</p>
+     <select name="status" >
+                 <!-- <option default="">Select Gender</option> -->
+                 <option  value="0">Pending </option>
+                 </select><br><br>
+                 <span >want to share your medical history  ?</span> 
+                 <input type="checkbox" checked="checked" name="share_data" >
+                 <div class="form-group" style="display: none;">
+                    <p align="left">Patient Name</p>
+               <select name="patient" style="visibility:hidden ;" >
+                   
+                     <option  value="{{ puser.id }}">{{ puser }} </option>
+                       
+                      </select><br>
+                </div>
+                 <button type="submit" class="form-control btn-primary">Submit</button>
+      </div>
+      </div>
+
+    </div>
+
+<!--JS Library -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" ></script>
+</body>
+</html>
