@@ -36,7 +36,14 @@
 </head>
 <body>
   {% include "nav.html" %}
-  
+  {% if msg %}
+  <div >
+	<div class="row">
+	 <div class="col-sm-6 ">
+<h2 class="alert alert-danger" >{{msg}}</h2>
+  </div> 
+
+  {% endif %}
 <!-- Form -->
 <div class="container">
 <div class="row" style="margin-left:60%;">
@@ -46,10 +53,10 @@
  	<input type="date" name="date" placeholder="Date" required="" class="form-control"><br>
  	<input type="time" name="time" placeholder="time" required="" class="form-control"><br>
  	
-   <p align="left">Docter Name</p>
+   <p align="left">Doctor Name</p>
  <select name="docter" >
  	{% for data in docter_names %}
-	   <option  value="{{ data.pk }}">{{ data.name }} ,  specialization: {{data.specialization}}  </option>
+	   <option  value="{{ data.pk }}">{{ data.name }} ,  specialization: {{data.specialization.name}}  </option>
 	     {% endfor %}
 	    </select><br>
   <div class="form-group" >

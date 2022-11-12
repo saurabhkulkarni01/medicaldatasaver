@@ -22,6 +22,7 @@
 			width: 140px;
 			border-radius: 0px!important;
 		}
+		
 	</style>
 </head>
 <body>
@@ -32,9 +33,15 @@
  <form action="{% url 'profile' user=user %}" method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
  	<input type="text" name="name" placeholder="Full Name" required="" class="form-control" value="{{ userdata.name }}"><br>
- 	
+ 	<p align="left">email</p>
  	<input type="email" name="email" placeholder="Email" required="" class="form-control" value="{{ userdata.email }}"><br>
+	 <p align="left">mobile Number</p>
  	<input type="tel" name="phone" placeholder="Phone Number" required="" class="form-control" value="{{ userdata.phone }}"><br>
+	 <p align="left">Average Appointment time</p>
+	 <input type="number" name="average_appointment_time" placeholder="Average appointment time (in mins)" required="" class="form-control" value="{{ userdata.average_appointment_time }}"><br>
+	 <p align="left">Average Fee</p>
+	 <input type="number" name="average_fee" placeholder="Average Fee" required="" class="form-control" value="{{ userdata.average_fee }}"><br>
+	 <p align="left">Age</p>
  	<input type="number" name="age" placeholder="Age" required="" class="form-control" value="{{ userdata.age }}"><br>
  	  <div class="form-group">
   	<p align="left">Gender</p>

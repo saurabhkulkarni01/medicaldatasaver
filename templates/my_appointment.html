@@ -36,6 +36,7 @@
       {% endif %}
       <th scope="col">Status</th>
       <th scope="col"></th>
+      <th scope="col"></th>
 
     </tr>
   </thead>
@@ -48,12 +49,22 @@
       <td> {{ data.docterid.name }} </td>
       {% else %}
       <td> {{ data.patientid.name }} </td>
-      {% endif %}
-
+      {% endif %} 
 
       <!-- <td> {{ data.patientid.name }}</td> -->
+      {% if data.is_cancelled %}
+       
+      {% if data.is_pop %}
+      <td style="color: red;">Cancelled</td>
+      {% else %}
+      <td>Cancelled</td>
+      {% endif %}
+      {% else %}
       {% if data.status %}
       <td>Completed</td>
+      {% if user == 'D' %}
+      <td ><a class="btn btn-success"  href="{% url 'appoint' id=data.id %}">Add Prescition</a></td>
+      {% endif %}
       {% else %}
       
       <td>Pending</td>
@@ -62,12 +73,16 @@
         {% if user == 'D' %}
         {% if data.share_permission %}
         
-        <td><a href="{% url 'patient_history' id=data.patientid.id %}">History</a></td>
+        <td  ><a class="btn btn-warning"  href="{% url 'patient_history' id=data.patientid.id %}">History</a></td>
         {% endif %}
+        <td  ><a class="btn btn-warning"  href="{% url 'cancel_appoint_doct' id=data.id %}">Cancel</a></td>
+
+      {% endif %}
+      {% else %}
+      <td  ><a class="btn btn-warning"  href="{% url 'cancel_appoint_pat' id=data.id %}">Cancel</a></td>
       {% endif %}
       {% endif %}
       {% endif %}
-      
     </tr>
     {% endfor %}
    

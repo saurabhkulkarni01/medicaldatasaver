@@ -12,11 +12,16 @@ urlpatterns = [
     path('login', login , name = 'login' ),
     path('about', about , name = 'about' ),
     path('findSpecs', findSpecs, name = 'findSpecs' ),
-
+    path('appoint/(?P<id>\d+)/$', appoint, name='appoint'),
     path('logout', logout , name = 'logout' ),
     path('profile/(?P<user>.*)/$', profile , name = 'profile' ),
     path('dashboard/(?P<user>.*)/$', dashboard , name = 'dashboard'),
     path('create_appointment/(?P<user>.*)/$', create_appointment , name = 'create_appointment'),
+    path('check_availibility/(?P<user>.*)/$', check_availibility , name = 'check_availibility'),
+    path('cancel_appoint_pat/(?P<id>\d+)/$', cancel_appoint_pat , name = 'cancel_appoint_pat'),
+    path('cancel_appoint_doct/(?P<id>\d+)/$', cancel_appoint_doct , name = 'cancel_appoint_doct'),
+    path('block_slot/', block_slot , name = 'block_slot'),
+    
     path('delete_patient/(?P<id>\d+)/$', delete_patient , name = 'delete_patient'),
     path('update_patient/(?P<id>\d+)/$', update_patient , name = 'update_patient'),
     path('patient_history/(?P<id>\d+)/$', med_history , name = 'patient_history'),

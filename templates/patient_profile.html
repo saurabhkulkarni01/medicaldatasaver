@@ -31,11 +31,12 @@
  
  <form action="{% url 'profile' user=user %}" method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
+	<p align="left">Name</p>
  	<input type="text" name="name" placeholder="Full Name" required="" class="form-control" value="{{ userdata.name }}"><br>
- 	
+ 	<p align="left">Email</p>
  	<input type="email" name="email" placeholder="Email" required="" class="form-control" value="{{ userdata.email }}"><br>
- 	<input type="tel" name="phone" placeholder="Phone Number" required="" class="form-control" value="{{ userdata.phone }}"><br>
- 	<input type="number" name="age" placeholder="Age" required="" class="form-control" value="{{ userdata.age }}"><br>
+ 	<p align="left">Mobile Number</p><input type="tel" name="phone" placeholder="Phone Number" required="" class="form-control" value="{{ userdata.phone }}"><br>
+ 	<p align="left">Age</p><input type="number" name="age" placeholder="Age" required="" class="form-control" value="{{ userdata.age }}"><br>
  	  <div class="form-group">
   	<p align="left">Gender</p>
  <select name="gender" value="{{ userdata.gender }}">
@@ -53,7 +54,7 @@
 	 
 
 	         <option  name="{{ userdata.blood }}" >{{ userdata.blood }}</option>
-	                 <option  name="A+" value="">A+ </option>
+	        <option  name="A+" value="">A+ </option>
 	         <option  name="B+">B+</option>
 	         <option  name="AB+">AB+</option>
 	         <option  name="O+">O+</option>
@@ -66,12 +67,13 @@
 
 	         </select><br><br>
 	<textarea class="form-control" name="address" value="{{ userdata.address }}" placeholder="Address">{{ userdata.address }}</textarea><br>
-<input type="file" name="report"  class="form-control" ><br>
+<!-- <input type="file" name="report"  class="form-control" ><br>
 <input type="text" name="case" required="" class="form-control" value="{{ userdata.case }}" placeholder="Cases"><br>
-  </div>
+  </div> -->
 
-
-
+  <p align="left">Health Insurance Number</p><input type="number" name="health_insurance_no" placeholder="Health Insurance Number" required="" class="form-control" value="{{ userdata.health_insurance_no }}"><br>
+  <p align="left">disability</p><input type="text" name="disability" placeholder="disability" required="" class="form-control" value="{{ userdata.disability }}"><br>
+  <p align="left">Date of Birth : {{userdata.DOB}}</p><input type="date" name="DOB" placeholder="Date of Birth" required="" class="form-control"><br>
 
 
   <button type="submit" class="btn btn-primary">Update</button>

@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date, timedelta
+from sqlite3 import Time
 from django.shortcuts import render , redirect , HttpResponse
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -89,9 +90,9 @@ def login(request):
 						return redirect('/')			
 			else:
 				print('Login Failed')
-				return render(request,'login.html')
+				return render(request,'error.html',{"msg":"Wrong Username or password !"})
 		except:
-			return render(request,'login.html')
+			return render(request,'error.html',{"msg":"Wrong Username or password !"})
 	return render(request , 'login.html',{"specs":specs})
 
 # Logout
@@ -107,7 +108,7 @@ def findSpecs(request):
 		spcname = request.POST['specs']
 		specialization = Specialization.objects.get(name = spcname)
 		doctors = Docter.objects.filter( specialization = specialization )
-		print(spcname, doctors)
+		# print(spcname, doctors)
 		return render(request,'doctorlist.html',{"user" : "P", "doctors": doctors, "specialization": specialization,"status":True})
 		# return render(request,'register.html',specs=specs)
 	return redirect('/')
@@ -130,9 +131,13 @@ def profile(request, user):
 			update.age = request.POST['age']
 			update.blood = request.POST['blood']
 			update.address = request.POST['address']
-
-
-			update.case = request.POST['case']
+			update.health_insurance_no = request.POST['health_insurance_no']
+			update.disability = request.POST['disability']
+			update.DOB = request.POST['DOB']
+			try:
+				update.case = request.POST['case']
+			except:
+				update.case = ""
 			try:
 				myfile = request.FILES['report']
 				fs = FileSystemStorage(location='media/report/')
@@ -148,6 +153,8 @@ def profile(request, user):
 		else:
 			update = Docter.objects.get(username=userid)
 			update.name = request.POST['name']
+			update.average_fee = request.POST['average_fee']
+			update.average_appointment_time = request.POST['average_appointment_time']
 			update.phone = request.POST['phone']
 			update.email = request.POST['email']
 			update.gender = request.POST['gender']
@@ -182,12 +189,43 @@ def dashboard(request , user):
 	
 	return render(request , 'home.html', {'user':user, "status": status, "specs":specs})
 
-
+def is_available(doctor , appoint_date, tim):
+	f=0
+	avg_time = doctor.average_appointment_time
+	min = tim.minute + avg_time
+	hours = tim.hour
+	hours += int(min/60)
+	min = min%60
+	endtime = time(hours,min,0)
+	
+	timm = time(tim.hour, tim.minute,0)
+	tim= timm
+	# print(blocktime.objects.filter(date=appoint_date, doctor=doctor)[0].starttime,blocktime.objects.filter(date=appoint_date, doctor=doctor)[0].endtime,111111111111111)
+	# print(type(tim))
+	print(tim,endtime)
+	tmappointment = Appointment.objects.filter(date=appoint_date, docterid=doctor, time__gte = tim , time__lt =endtime, is_cancelled=False)
+	if len(tmappointment)>0 :
+		f=1
+	tblock = blocktime.objects.filter(date=appoint_date, doctor=doctor, starttime__gte = tim , starttime__lt =endtime)
+	if len(tblock)>0 :
+		f=1
+	tblock = blocktime.objects.filter(date=appoint_date, doctor=doctor, endtime__gte = tim , endtime__lte =endtime)
+	if len(tblock)>0 :
+		f=1
+	tblock = blocktime.objects.filter(date=appoint_date, doctor=doctor, endtime__gte = endtime , starttime__lte = tim )
+	# print(tim, endtime,f,tblock)
+	if len(tblock)>0 :
+		f=1
+	tblock = blocktime.objects.filter(date=appoint_date, doctor=doctor, endtime__lte = endtime , starttime__gte = tim )
+	if len(tblock)>0 :
+		f=1
+	return f
 
 
 def create_appointment(request , user):
 	userid = User.objects.get(username=request.user)
 	status = False
+	specs= Specialization.objects.all()
 	if request.user:
 		status = request.user
 
@@ -198,20 +236,34 @@ def create_appointment(request , user):
 		id_user = User.objects.get(pk=p_id)
 		docter = Docter.objects.get(pk=d_id)
 		patient = Patient.objects.get(username=userid)
-
+		
 		print(d_id, type(d_id),p_id,patient)
 		p_id = int(request.POST['patient'])
 		status = int(request.POST['status'])
+		try:
+			share_permission=bool(request.POST['share_data'])
+
+		except:
+			share_permission = False
 		appoint_date = datetime.datetime.strptime(request.POST['date'], "%Y-%m-%d")
 		today_date = datetime.datetime.today()
-		print(appoint_date<today_date)
-		if(appoint_date <= today_date):
+		print(request.POST['time'],type(request.POST['time']))
+		if appoint_date <= today_date :
 			patient_names = Patient.objects.all()
 			docter_names = Docter.objects.all()	
+			return render(request,'error.html',{"msg":"Select Valid Date and Time",'user':user,'puser':userid, "status": status})
 			return redirect( 'create_appointment' , {'user':user,'puser':userid, "status": status , "patient_names" : patient_names , 
-				"docter_names" : docter_names })
-
-		new_appointment = Appointment(docterid = docter , patientid = patient ,time = request.POST['time'] ,  date = request.POST['date'] , status  = status )
+				"docter_names" : docter_names,"share_permission":share_permission })
+		print(request.POST['time'],type(request.POST['time']))
+		f = is_available(docter,appoint_date,datetime.datetime.strptime(request.POST['time'], "%H:%M"))
+		print(f,111)
+		if f==1 :
+			patient_names = Patient.objects.all()
+			docter_names = Docter.objects.all()	
+			return render(request , 'home.html' ,{"msg":"Appointment Not created! Select another date or Time ",'user':'P','puser':userid, "status": True , "patient_names" : patient_names , 
+	"docter_names" : docter_names,'specs':specs})
+		
+		new_appointment = Appointment(docterid = docter , patientid = patient ,time = request.POST['time'] ,  date = request.POST['date'] , status  = status, share_permission = share_permission )
 		new_appointment.save()
 		print(new_appointment,new_appointment.patientid)
 		return redirect('dashboard',user = user)
@@ -313,7 +365,9 @@ def myappointment(request):
 	user_id = User.objects.get(username=request.user)
 	patient= Patient.objects.get(username=user_id)
 	data = Appointment.objects.filter(patientid=patient)
-	print(user_id, data)
+	for appoint in data:
+		appoint.is_pop = False
+		appoint.save() 
 	return render(request , 'my_appointment.html' , {'data':data, 'user' :"P" , 'status':status})
 
 
@@ -326,7 +380,9 @@ def docter_appointment(request):
 	user_id = User.objects.get(username=request.user)
 	docter= Docter.objects.get(username=user_id)
 	data = Appointment.objects.filter(docterid=docter)
-
+	for appoint in data:
+		appoint.is_pop = False
+		appoint.save()
 	return render(request , 'my_appointment.html' , {'data':data, 'user' :"D" , 'status':status})
 
 
@@ -338,12 +394,13 @@ def docter_prescription(request):
 		status = request.user
 	user_id = User.objects.get(username=request.user)
 	docter = Docter.objects.get(username=user_id)
-	print(docter)
+	print(docter,user_id)
 	pers   = Prescription2.objects.filter(docter = docter)
 	print(len(pers))
 	for i in pers:
 		print(i.patient)
 	return render(request , 'docter_prescription.html' , {'pers':pers, 'user' :"D" , 'status':status})
+
 
 
 # Create Prescription 
@@ -362,7 +419,7 @@ def create_prescription(request):
 		return redirect('docter_prescription')
 	user_id = User.objects.get(username=request.user)
 	docter = Docter.objects.get(username=user_id)
-	data = Appointment.objects.filter(docterid=docter, status=0 )
+	data = Appointment.objects.filter(docterid=docter,status=True )
 	print(data)
 
 	return render(request , 'create_prescription.html',{"data":data , 'user' : "D" , 'status' : status})
@@ -401,11 +458,186 @@ def doctor_profile(request , id):
 	userid = User.objects.get(username=request.user)
 	return render(request , 'specialized_doctor_profile.html',{"review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid})
 
+def check_availibility(request , user):
+	userid = User.objects.get(username=request.user)
+	status = False
+	if request.user:
+		status = request.user
+
+	if request.method == "POST":
+		
+		d_id = int(request.POST['docter']) 
+		docter = Docter.objects.get(pk=d_id) 
+		appoint_date = datetime.datetime.strptime(request.POST['date'], "%Y-%m-%d") 
+		availibility = []
+		appoints = Appointment.objects.filter(date=appoint_date, docterid=d_id)
+		for  app in appoints :
+			print(app.time)
+		average_appointment_time = docter.average_appointment_time
+		aveg_hr = int(average_appointment_time/60) 
+		aveg_min = average_appointment_time%60
+		print(aveg_hr, aveg_min, type(aveg_min), type(aveg_hr))
+		starttime = time(10,0)
+		endtime = time(21,00)
+		avail_date=appoint_date.date
+		delta = timedelta(hours=1)
+		st = time(10,0)
+		nxt =time(st.hour+aveg_hr ,st.minute+aveg_min)
+		while st <= endtime:
+			
+			f=0
+			tmappointment = Appointment.objects.filter(date=appoint_date, docterid=d_id, time__gte = st , time__lt =nxt, is_cancelled=False)
+			if len(tmappointment)>0 :
+				f=1
+			tblock = blocktime.objects.filter(date=appoint_date, doctor=d_id, starttime__gte = st , starttime__lt =nxt)
+			if len(tblock)>0 :
+				f=1
+			tblock = blocktime.objects.filter(date=appoint_date, doctor=d_id, endtime__gte = st , endtime__lte =nxt)
+			if len(tblock)>0 :
+				f=1
+			tblock = blocktime.objects.filter(date=appoint_date, doctor=d_id, endtime__gte = nxt , starttime__lte =st)
+			if len(tblock)>0 :
+				f=1
+			availibility.append({
+				"f":f,
+				"start":st.hour,
+				"start_min":  st.minute,
+				"end":nxt.hour,
+				"end_min": nxt.minute
+			})
+			st=nxt
+			addmin=st.minute+aveg_min
+			addhr= aveg_hr+ int(addmin/60)
+			addmin=addmin%60
+			nxt =time(st.hour+addhr ,addmin)
+		doctor = Docter.objects.get(id=d_id)
+		review = Reviews.objects.filter(doctor = doctor)
+		userid = User.objects.get(username=request.user)
+		return render(request , 'specialized_doctor_profile.html',{"avail_date":avail_date , "availibility":availibility, "review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid})
+			 
+
+	doctor = Docter.objects.get(id=id)
+	review = Reviews.objects.filter(doctor = doctor)
+	userid = User.objects.get(username=request.user)
+	return render(request , 'specialized_doctor_profile.html',{"review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid})
+
+def appoint(request, id):
+	status = True
+	if request.user:
+		status = request.user
+	appointment = Appointment.objects.get(id=id)
+	prescription = Prescription2.objects.filter(appointment = appointment) 
+	userid = User.objects.get(username=request.user)
+	return render(request , 'appoint.html',{"appointment":appointment, 'user' : "D" , 'status' : status, 'prescription':prescription, 'puser':userid})
+
+def cancel_appoint_doct( request , id):
+	status = True
+	if request.user :
+		status = request.user
+	if request.method == "POST":
+		try :
+			appoint = Appointment.objects.get(id=id)
+			appoint.is_cancelled=True
+			appoint.cancelled_by_doct = True
+			appoint.is_pop=True
+			reason = request.POST['reason']
+			appoint.cancellation_reason = reason
+			appoint.save()
+		except:
+			pass
+		user_id = User.objects.get(username=request.user)
+		docter= Docter.objects.get(username=user_id)
+		data = Appointment.objects.filter(docterid=docter)
+		# try :
+		# 	appoint = Appointment.objects.get(id=id)
+		# 	appoint.is_pop= False
+		# 	appoint.save()
+		# except : 
+		# 	pass
+
+		return render(request , 'my_appointment.html' , {'data':data, 'user' :"D" , 'status':status})
+	appointment = Appointment.objects.get(id=id)
+	user_id = User.objects.get(username=request.user)
+	docter= Docter.objects.get(username=user_id)
+	data = Appointment.objects.filter(docterid=docter)
+	return render(request , 'cancel_appoint.html' , {'data':data, 'user' :"D" , 'status':status, 'appointment':appointment})
+
+def cancel_blockslot_appoint(blockslot):
+	date = blockslot.date
+	starttime = blockslot.starttime
+	endtime = blockslot.endtime
+	doctor = blockslot.doctor 
+	tmappointment = Appointment.objects.filter(date=date, docterid=doctor, time__gte = starttime , time__lte =endtime, is_cancelled=False)
+	for appoint in tmappointment:
+		appoint.is_cancelled=True
+		appoint.cancelled_by_doct = True
+		appoint.cancellation_reason = "Slot not available"
+		appoint.is_pop=True
+		appoint.save()
+	return
+
+def block_slot(request):
+	
+	if request.method == "POST":
+		reason = request.POST['reason']
+		starttime = request.POST['starttime']
+		endtime = request.POST['endtime']
+		user_id = User.objects.get(username=request.user)
+		doctor = Docter.objects.get(username=user_id)
+		date = request.POST['date']
+		new_block = blocktime(doctor=doctor, date=date ,reason=reason , starttime=starttime, endtime=endtime)
+		new_block.save()
+		cancel_blockslot_appoint(new_block)
+		allblocks = blocktime.objects.filter(doctor=doctor)
+		print(allblocks)
+		# print(spcname, doctors)
+		return render(request, 'blocktimelist.html',{'data':allblocks, 'user' :"D" , 'status':True, 'doctor':doctor}) 
+	user_id = User.objects.get(username=request.user)
+	doctor = Docter.objects.get(username=user_id)
+
+	allblocks = blocktime.objects.filter(doctor=doctor)
+	print(doctor, allblocks)
+		# return render(request,'register.html',specs=specs)
+	# return redirect('/')
+	return render(request, 'blocktimelist.html',{'data':allblocks, 'user' :"D" , 'status':True, 'doctor':doctor}) 
+
+def cancel_appoint_pat( request , id):
+	status = True
+	if request.user :
+		status = request.user
+	if request.method == "POST":
+		try :
+			appoint = Appointment.objects.get(id=id)
+			appoint.is_cancelled=True
+			appoint.cancelled_by_doct = False
+			appoint.is_pop=True
+			reason = request.POST['reason']
+			appoint.cancellation_reason = reason
+			appoint.save()
+		except:
+			pass
+		user_id = User.objects.get(username=request.user)
+		pat= Patient.objects.get(username=user_id)
+		data = Appointment.objects.filter(patientid=pat)
+		# try :
+		# 	appoint = Appointment.objects.get(id=id)
+		# 	appoint.is_pop= False
+		# 	appoint.save()
+		# except : 
+		# 	pass
+
+		return render(request , 'my_appointment.html' , {'data':data, 'user' :"P" , 'status':status})
+	
+	user_id = User.objects.get(username=request.user)
+	appointment = Appointment.objects.get(id=id)
+	pat= Patient.objects.get(username=user_id)
+	data = Appointment.objects.filter(patientid=pat)
+	return render(request , 'cancel_appoint.html' , {'data':data, 'user' :"P" , 'status':status, 'appointment':appointment})
 
 # Upadate Status
 def update_status(request  , id):
 	print(id)
-	specs = Specialization.objects.all();
+	specs = Specialization.objects.all()
 	status = False
 	if request.user:
 		status = request.user
@@ -421,7 +653,7 @@ def update_status(request  , id):
 		print()
 	data.status = 1
 	data.save()
-	return redirect('home',{"specs":specs} )
+	return render(request, 'home.html',{"status":status,'user':"D","specs":specs})
 
 
 

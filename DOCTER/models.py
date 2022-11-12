@@ -5,10 +5,13 @@ from django.db import models
 from PATIENT.models import *
 from .models import *
 from COMMON_APP.models import *
+from datetime import date
 # Create your models here.
 from django.contrib.auth.models import User
 
 # Create your models here.
+def in_30_days():
+    return date.today()
 
 class Specialization(models.Model):
 	name = models.CharField(max_length=80)
@@ -30,6 +33,18 @@ class Docter(models.Model):
 	department = models.CharField(max_length=30 , default = "")
 	attendance = models.IntegerField(default = 0)
 	salary = models.IntegerField(default = 10000)
+	average_appointment_time = models.IntegerField(default=60)
+
+class blocktime(models.Model):
+	doctor = models.ForeignKey(Docter,on_delete = models.CASCADE,unique = False)
+	starttime = models.TimeField()
+	endtime = models.TimeField()
+	date = models.DateField(default=in_30_days)
+	reason = models.TextField(default="")
+	
+	def __str__(self):
+		return f"{self.starttime.strftime('%d-%m-%Y')}"
+
 
 class Reviews(models.Model):
 	patient = models.ForeignKey(Patient, on_delete = models.CASCADE,unique = True, null=True, blank=True, default=NULL)

@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 
 
@@ -14,12 +15,16 @@ class Patient(models.Model):
 	age = models.IntegerField(default= 0 )
 	blood = models.CharField(max_length=10)
 	medical = models.CharField(max_length=100)
-	case = models.CharField(max_length=20)
+	case = models.CharField(max_length=20,default="none")
 	username = models.OneToOneField(User,on_delete = models.CASCADE)
 	health_insurance_no = models.CharField(max_length=15)
 	disability = models.CharField(max_length=100)
 	DOB = models.DateField( auto_now=True)
 	sex = models.CharField(max_length=5)
+	diet = models.TextField(default="")
+	allergies = models.TextField(default="")
+	current_medicines = models.TextField(default="")
+	current_diseases = models.TextField(default="")
 
 
 
