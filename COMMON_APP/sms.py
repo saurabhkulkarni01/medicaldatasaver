@@ -5,8 +5,8 @@ from twilio.rest import Client
 # and set the environment variables. See http://twil.io/secure
 
 def SendWelcomeMessage(name,phone):
-    account_sid = "ACe3bbdea044b7fb469c602d55ef4eec6a"
-    auth_token = "eec86548586ab78b5461811be1188d38"
+    account_sid = ""
+    auth_token = ""
     client = Client(account_sid, auth_token)
     body = "Wecome "+name+"to the Medical History Saver App"
     PhoneNumber="+91"+str(phone)
