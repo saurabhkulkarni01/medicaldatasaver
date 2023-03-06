@@ -20,6 +20,9 @@
       <li class="nav-item active">
         <a class="nav-link text-light" href="{% url 'dashboard' user=user %}">Home <span class="sr-only">(current)</span></a>
       </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'notification' user=user %}">Notification <i class="fa fa-bell " style="color: aliceblue;"></i> <span class="sr-only">(current)</span></a>
+      </li>
      {% endif %}
       {% if not status %}
        <li class="nav-item active">
@@ -37,10 +40,16 @@
         <a class="nav-link text-light" href="{% url 'create_appointment' user=user %}">Book Appointment<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'allblogs' user=user %}">Blogs <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
         <a class="nav-link text-light" href="{% url 'profile' user=user %}">Profile <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
         <a class="nav-link text-light" href="{% url 'medical_history'  %}">Medical History <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'consulting'  %}">Consultation <span class="sr-only">(current)</span></a>
       </li>
        <li class="nav-item active">
         <a class="nav-link text-light" href="/logout">Logout <span class="sr-only">(current)</span></a>
@@ -58,7 +67,13 @@
         <a class="nav-link text-light" href="{% url 'block_slot'  %}">Block Slot <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'allblogs' user=user %}">Blogs <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
         <a class="nav-link text-light" href="{% url 'profile' user=user %}">Profile <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'consulting'  %}">Query <span class="sr-only">(current)</span></a>
       </li>
      <li class="nav-item active">
         <a class="nav-link text-light" href="/logout">Logout <span class="sr-only">(current)</span></a>

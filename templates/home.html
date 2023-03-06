@@ -4,6 +4,7 @@
 	<title>Home</title>
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<style type="text/css">
 		.container {
 			margin-top: 70px;
@@ -43,7 +44,7 @@
 			<p class="lead"> We , the students of IIT Kharagpur , are trying to build platform for saving patient's medical history, channel to share the past medical records to doctors and doctor's appointment booking and reminder system !</p>	
 			<p class="lead"> We are doing this project as out BTP under guidance of Prof. Ram Babu Roy </p>	
 			{% if status and user == "P" %}
-		<button class="button btn-lg button-primary btn-primary">Add Past Record</button>
+		 <button class="button btn-lg button-primary btn-primary">Add Past Record</button>
 {% endif %}
 		</div>
 
@@ -63,7 +64,7 @@
 				{% csrf_token %}
 	
 
-		<select name="specs">
+		<select name="specs" class="btn-lg btn">
 			{% for i in specs %}
 			<option value={{i.name}}>{{ i.name }}      </option>
 			{% endfor %}
@@ -75,13 +76,57 @@
 </form>
 			  </div>
 			  </div>
+			  <div  style="margin-top: 2%; border: 5px; border-color: black;">
+				<div class="row" style="margin-left:20%;border: 5px; border-color: black;">
+					<form action="/getdoctorsbydisease" method="POST">
+						<h5 style="font-weight: 700;" >Find Doctor by Disease</h5><br>
+						{% csrf_token %}
+			
 		
+				<select name="disease" class="btn-lg btn">
+					{% for i in disease %}
+					<option value="{{i.disease}}">{{ i.disease }}      </option>
+					{% endfor %}
+				</select><br><br>
+			
+		 
+			
+		  <button type="submit" class="form-control btn-primary">Submit</button>
+		</form>
+					  </div>
+					  </div>
 			</div> 
  
 {% endif %}
 
 </div>
+{% if status and user == "P" %}
+<div class="container">
+	<div class="row">
+		
+		   <div class="col-sm-6">
+			   <h2>Get Your Personalised diet</h2>
+			   <p class="lead"> Get your Personilized diet depending on yor Height, Weight and Age !</p>	
+			   <p class="lead"> We Developed System which gives diet using Ai generated Techniques </p>	
+			   {% if status and user == "P" %}
+			   <a href="{% url 'dietsuggestion'  %}">
+				<span class="button btn-lg button-primary btn-primary">Find Diet </span>
+			</a> 
+   {% endif %}
+		   </div>
+   
+	   
+   <div>
+	   
+   
+   </div>
+   <div class="col-sm-6 ">
+	{% load static %}
+	<img src="https://thumbs.dreamstime.com/b/healthy-unhealthy-lifestyle-infographics-girl-food-fitness-diet-what-your-choice-poster-background-cartoon-flat-vector-161103921.jpg" alt="My image">
+	  </div>
+</div>
 
+{% endif %}
 
 <!--JS Library -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>

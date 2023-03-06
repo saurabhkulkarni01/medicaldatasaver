@@ -21,16 +21,31 @@ from django.core.mail import send_mail
 from datetime import date
 from datetime import time
 import datetime
+from .sms import *
+from .chatgpt import getans
+from .whatsappsms import welcomemsg
+from .mail import welcomemail
 # Create your views here.
 def home(request):
 	specs = Specialization.objects.all()
-	return render(request , 'home.html',{"user":None , "specs":specs})
+	disease = Disease.objects.all()
+	return render(request , 'home.html',{"user":None , "specs":specs, "disease": disease})
 
 def register(request) :
 	specs = Specialization.objects.all()
+	disease = Disease.objects.all()
 	if request.method == 'POST':
-		print(request.POST['name'])
+		print(type(request.POST['name']),type(request.POST['phone']))
 		print(request.POST['post'])
+		
+		# try:
+		# 	SendWelcomeMessage(name=request.POST['name'],phone=request.POST['phone'])
+		# except:
+		# 	pass
+		
+		# welcomemsg()
+		welcomemail()
+		
 		try:
 			user = User.objects.get(username=request.POST['username'])
 			print(user)
@@ -51,7 +66,7 @@ def register(request) :
 				new = Docter(phone=request.POST['phone'],name=request.POST['name'],email=request.POST['email'],username=user, specialization=spec)	
 				new.save()	
 				print(new)
-				return render(request , 'home.html',{"user":None, "specs":specs})
+				return render(request , 'home.html',{"user":None, "specs":specs,"disease":disease})
 	
 			print('Registered Successfully')
 			return render(request,'register.html')
@@ -64,6 +79,7 @@ def register(request) :
 def login(request):
 	specs = Specialization.objects.all()
 	if request.method == 'POST':
+		# getans("is chatgpt working")
 		try:
  			# Check User in DB
 	 		
@@ -97,6 +113,7 @@ def login(request):
 
 # Logout
 def logout(request):
+	# welcomemail()
 	auth.logout(request)
 	print('Logout')
 	return redirect('/login')
@@ -150,7 +167,7 @@ def profile(request, user):
 				pass
 			update.save()
 			return redirect('dashboard',user = user)
-		else:
+		if user == "D":
 			update = Docter.objects.get(username=userid)
 			update.name = request.POST['name']
 			update.average_fee = request.POST['average_fee']
@@ -163,6 +180,21 @@ def profile(request, user):
 			update.address = request.POST['address']
 			update.save()
 			return redirect('dashboard',user = user)
+		if user == "C":
+			update = Chemist.objects.get(username=userid)
+			update.name = request.POST['name']
+			update.shop_name = request.POST['shop_name']
+			update.average_appointment_time = request.POST['average_appointment_time']
+			update.phone = request.POST['phone']
+			update.email = request.POST['email']
+			update.gender = request.POST['gender']
+			update.age = request.POST['age']
+			update.blood = request.POST['blood']
+			update.address = request.POST['address']
+			update.save()
+			return redirect('dashboard',user = user)
+
+
 
 
 	if user == "P":
@@ -180,6 +212,7 @@ def profile(request, user):
 
 def dashboard(request , user):
 	print(user)
+	disease = Disease.objects.all()
 	specs= Specialization.objects.all()
 	status = False
 	if request.user:
@@ -187,7 +220,7 @@ def dashboard(request , user):
 	if user == "AnonymousUser":
 		return redirect('home')
 	
-	return render(request , 'home.html', {'user':user, "status": status, "specs":specs})
+	return render(request , 'home.html', {'user':user, "status": status, "specs":specs,"disease":disease})
 
 def is_available(doctor , appoint_date, tim):
 	f=0
@@ -226,6 +259,7 @@ def create_appointment(request , user):
 	userid = User.objects.get(username=request.user)
 	status = False
 	specs= Specialization.objects.all()
+	disease = Disease.objects.all()
 	if request.user:
 		status = request.user
 
@@ -261,8 +295,14 @@ def create_appointment(request , user):
 			patient_names = Patient.objects.all()
 			docter_names = Docter.objects.all()	
 			return render(request , 'home.html' ,{"msg":"Appointment Not created! Select another date or Time ",'user':'P','puser':userid, "status": True , "patient_names" : patient_names , 
-	"docter_names" : docter_names,'specs':specs})
+	"docter_names" : docter_names,'specs':specs,"disease":disease})
 		
+		try:
+			appointmentbooked(name=docter.name,phone=docter.phone, withname=patient.name, date=request.POST['date'])
+			appointmentbooked(withname=docter.name,phone=patient.phone, name=patient.name, date=request.POST['date'])
+		except:
+			pass
+
 		new_appointment = Appointment(docterid = docter , patientid = patient ,time = request.POST['time'] ,  date = request.POST['date'] , status  = status, share_permission = share_permission )
 		new_appointment.save()
 		print(new_appointment,new_appointment.patientid)
@@ -455,8 +495,9 @@ def doctor_profile(request , id):
 		status = request.user
 	doctor = Docter.objects.get(id=id)
 	review = Reviews.objects.filter(doctor = doctor)
+	blogs = Blog.objects.filter(doctor = doctor)
 	userid = User.objects.get(username=request.user)
-	return render(request , 'specialized_doctor_profile.html',{"review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid})
+	return render(request , 'specialized_doctor_profile.html',{"review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid, 'blogs':blogs})
 
 def check_availibility(request , user):
 	userid = User.objects.get(username=request.user)
@@ -511,15 +552,17 @@ def check_availibility(request , user):
 			addmin=addmin%60
 			nxt =time(st.hour+addhr ,addmin)
 		doctor = Docter.objects.get(id=d_id)
+		blogs = Blog.objects.filter(doctor = doctor)
 		review = Reviews.objects.filter(doctor = doctor)
 		userid = User.objects.get(username=request.user)
-		return render(request , 'specialized_doctor_profile.html',{"avail_date":avail_date , "availibility":availibility, "review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid})
+		return render(request , 'specialized_doctor_profile.html',{"avail_date":avail_date , "availibility":availibility, "review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid, 'blogs':blogs})
 			 
 
 	doctor = Docter.objects.get(id=id)
+	blogs = Blog.objects.filter(doctor = doctor)
 	review = Reviews.objects.filter(doctor = doctor)
 	userid = User.objects.get(username=request.user)
-	return render(request , 'specialized_doctor_profile.html',{"review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid})
+	return render(request , 'specialized_doctor_profile.html',{"review":review , 'user' : "P" , 'status' : status, 'doctor':doctor, 'puser':userid, 'blogs':blogs})
 
 def appoint(request, id):
 	status = True
@@ -548,6 +591,11 @@ def cancel_appoint_doct( request , id):
 		user_id = User.objects.get(username=request.user)
 		docter= Docter.objects.get(username=user_id)
 		data = Appointment.objects.filter(docterid=docter)
+		try:
+			appointmentcancellation(name=docter.name,phone=docter.phone, withname=appoint.patientid.name, date=appoint.date, reason=reason)
+			appointmentcancellation(withname=docter.name,phone=appoint.patientid.phone, name=appoint.patientid.name, date=appoint.date, reason=reason)
+		except:
+			pass
 		# try :
 		# 	appoint = Appointment.objects.get(id=id)
 		# 	appoint.is_pop= False
@@ -634,6 +682,120 @@ def cancel_appoint_pat( request , id):
 	data = Appointment.objects.filter(patientid=pat)
 	return render(request , 'cancel_appoint.html' , {'data':data, 'user' :"P" , 'status':status, 'appointment':appointment})
 
+def allblogs(request,user):
+	allblogs = Blog.objects.all().order_by('date').reverse()
+	
+	return render(request , 'blogs.html' , {'allblogs':allblogs, 'user' :user , 'status':True} )
+
+def blog(request, user,id):
+	status = False
+	if request.user:
+		status = request.user
+	blog = Blog.objects.get(id=id)
+	blog.views = blog.views + 1
+	blog.save()
+	return render(request , 'blog.html' , {'blog':blog, 'user' :user , 'status':True} ) 
+
+def notification(request, user,id):
+	status = False
+	if request.user:
+		status = request.user
+	blog = Blog.objects.get(id=id)
+	blog.views = blog.views + 1
+	blog.save()
+	return render(request , 'blog.html' , {'blog':blog, 'user' :user , 'status':True} ) 
+
+def myblog(request):
+	duser = request.user
+	doctor = Docter.objects.get(username=duser)
+	allblogs = Blog.objects.filter(doctor=doctor)
+	return render(request , 'blogs.html' , {'allblogs':allblogs, 'user' :"D" , 'status':True} )
+
+def addblog(request, user):
+	print(request.user)
+	status = False
+	if request.user:
+		status = request.user
+	if request.method == "POST":
+		
+		# try :
+		
+		duser = request.user
+		
+		doctor = Docter.objects.get(username=duser)
+		print(doctor)  
+		date = datetime.date.today()
+		heading = request.POST['heading']
+		blog = request.POST['blog']
+		topic = request.POST['topic']
+		views = 0
+		print(1)
+		new_blog = Blog(doctor = doctor , heading=heading ,  date = date , blog  = blog, topic=topic, views = views)
+		new_blog.save()
+		# except:
+		# 	pass
+		allblogs = Blog.objects.all() 
+	
+		return render(request , 'blogs.html' , {'allblogs':allblogs, 'user' :user , 'status':True} )
+	return render(request , 'addblog.html' , { 'user' :user , 'status':True, 'doctor':request.user} ) 
+
+def consulatation(request): 
+	specs = Specialization.objects.all()
+	if request.user:
+		status = request.user
+	if request.method == "POST":
+		query = request.POST['query']
+		ans = getans(query=query)
+		return render(request, 'consulting.html',{"status":status,"query":query,"ans":ans,'user':"P","specs":specs})	
+	
+	return render(request, 'consulting.html',{"status":status,'user':"P","specs":specs})
+
+def dietsuggestion(request): 
+	specs = Specialization.objects.all()
+	if request.user:
+		status = request.user
+	if request.method == "POST":
+		age = request.POST['Age']
+		weight = request.POST['Weight']
+		height = request.POST['Height']
+		query = "Suggest a diet for indian with age "+age+" height "+ height + "cm and weight "+weight+" kg"
+		ans = getans(query=query)
+		return render(request, 'diet_suggestion.html',{"status":status,"query":query,"ans":ans,'user':"P","specs":specs})	
+	
+	return render(request, 'diet_suggestion.html',{"status":status,'user':"P","specs":specs})
+
+def notification(request,user):
+	specs = Specialization.objects.all()
+	if request.user:
+		status = request.user
+	return render(request,'notification.html',{"status":status,"user":user})
+
+def getdoctorbydisease(request):
+	specs = Specialization.objects.all()
+	if request.user:
+		status = request.user
+	if request.method == "POST":
+		diseases = request.POST['disease']
+		diseas = Disease.objects.get(disease = diseases)
+		print(diseas)
+		rels = DiseaseSpecsRel.objects.filter(disease=diseas)
+		doctor =  Docter.objects.filter(name="zinmsnjbdjbnnkndek")
+		for rel in rels:
+			doctor = doctor | Docter.objects.filter(specialization=rel.specialization)
+		return render(request,'doctorlist.html',{"user" : "P", "doctors": doctor ,"status":True})
+		pass
+	return
+
+def symptomsfinder(request): 
+	specs = Specialization.objects.all()
+	if request.user:
+		status = request.user
+	if request.method == "POST":
+		query = request.POST['query']
+		ans = getans(query=query)
+		return render(request, 'consulting.html',{"status":status,"query":query,"ans":ans,'user':"P","specs":specs})	
+	
+	return render(request, 'consulting.html',{"status":status,'user':"P","specs":specs})
 # Upadate Status
 def update_status(request  , id):
 	print(id)

@@ -8,6 +8,7 @@ from COMMON_APP.models import *
 from datetime import date
 # Create your models here.
 from django.contrib.auth.models import User
+import datetime
 
 # Create your models here.
 def in_30_days():
@@ -15,6 +16,14 @@ def in_30_days():
 
 class Specialization(models.Model):
 	name = models.CharField(max_length=80)
+
+class Disease(models.Model):
+	disease = models.CharField(max_length=50)
+
+
+class DiseaseSpecsRel(models.Model):
+	specialization = models.ForeignKey(Specialization,on_delete = models.CASCADE,unique = False, null=True, blank=True, default=NULL)
+	disease = models.ForeignKey(Disease,on_delete = models.CASCADE,unique = False, null=True, blank=True, default=NULL)	
 
 class Docter(models.Model):
 	name = models.CharField(max_length=40)
@@ -34,6 +43,25 @@ class Docter(models.Model):
 	attendance = models.IntegerField(default = 0)
 	salary = models.IntegerField(default = 10000)
 	average_appointment_time = models.IntegerField(default=60)
+
+class Blog(models.Model):
+	heading = models.TextField()
+	blog = models.TextField()
+	date = models.DateField()
+	views = models.IntegerField()
+	doctor = models.ForeignKey(Docter, on_delete = models.CASCADE, null=True, blank=True, default=NULL)
+	topic = models.CharField(max_length=50)
+	
+
+class Chemist(models.Model):
+	shopname = models.TextField()
+	ownername = models.TextField()
+	phone = models.TextField()
+	address = models.TextField()
+	rating = models.FloatField(default=0)
+	username = models.OneToOneField(User,on_delete = models.CASCADE)
+
+
 
 class blocktime(models.Model):
 	doctor = models.ForeignKey(Docter,on_delete = models.CASCADE,unique = False)

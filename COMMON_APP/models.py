@@ -18,21 +18,24 @@ class Appointment(models.Model):
 	cancelled_by_doct = models.BooleanField(default = True)
 	is_pop = models.BooleanField (default=False)
 
+class notification(models.Model):
+	type = models.IntegerField(default=1)
+	message = models.TextField(default="")
+	datetime = models.DateTimeField(auto_now=True)
+	appointment = models.ForeignKey(Appointment,on_delete = models.CASCADE, default=NULL)
+	docterid = models.ForeignKey('DOCTER.Docter',on_delete = models.CASCADE, default=NULL)
+	patientid = models.ForeignKey('PATIENT.Patient',on_delete = models.CASCADE, default=NULL)
+	blogid = models.ForeignKey(Blog,on_delete = models.CASCADE, default=NULL)
+	to_doctor = models.BooleanField(default=False)
+	to_patient = models.BooleanField(default=False)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+class ChemistAppointment(models.Model):
+	status = models.IntegerField(default=0)
+	medicinelist = models.TextField()
+	appointment = models.ForeignKey(Appointment,on_delete = models.CASCADE, null=True, blank=True, default=NULL)
+	chemist = models.ForeignKey(Chemist,on_delete = models.CASCADE, null=True, blank=True, default=NULL)
 
 
 

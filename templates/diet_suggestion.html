@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Diet Suggestion</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    />
+    <style type="text/css">
+      input,
+      select {
+        width: 300px !important;
+        border-radius: 0px !important;
+      }
+      form {
+        margin: 20px auto;
+        width: 300px;
+        height: 450px;
+        text-align: center;
+      }
+      select {
+        height: 30px;
+      }
+      button {
+        width: 140px;
+        border-radius: 0px !important;
+      }
+
+      body {
+        font-family: "Open Sans", Helvetica, Arial, sans-serif;
+        background: #ededed;
+      }
+
+      input,
+      button {
+        border: none;
+        outline: none;
+        background: none;
+        font-family: "Open Sans", Helvetica, Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Montserrat, sans-serif;
+      }
+
+      .fullscreen-container {
+        background: #e7ebfb;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .login-container {
+        background-image: url('https://img.freepik.com/premium-vector/nutritionist-smartphone_24908-71637.jpg');
+        /* background-repeat: no-repeat; */
+        background-size: contain;
+        padding: 70px 40px;
+        border-radius: 25px;
+        
+        box-shadow: 3px 5px 25px #888888;
+        width: 80%;
+      }
+
+      h1 {
+        text-align: center;
+        color: blue;
+      }
+
+      .form {
+        margin-top: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        margin: 10px 0;
+      }
+
+      .input-group input {
+        font-size: 1.1rem;
+        padding: 8px;
+        text-align: center;
+        background: hsl(264, 45%, 94%, 0.7);
+        color: blue;
+        border: none;
+        outline: none;
+        border-radius: 25px;
+        width: 80%;
+        margin: 0 auto;
+      }
+
+      input::placeholder {
+        color: blue;
+        font-weight: bold;
+      }
+
+      .input-group input:focus {
+        box-shadow: 0 0 0 2px #d1c4e9;
+      }
+
+      button {
+        cursor: pointer;
+        font-size: 0.9rem;
+        margin: 10px auto 0;
+        padding: 12px 5px;
+        width: 35%;
+        border-radius: 100px;
+        border: none;
+        outline: none;
+        color: white;
+      }
+
+      button:focus,
+      button:hover {
+        box-shadow: blue;
+      }
+    </style>
+  </head>
+  <body>
+    {% include "nav.html" %}
+    <div class="container">
+      <div class="row">
+        <div class="fullscreen-container">
+          <div class="login-container">
+            <div class="row">
+              <div class="col-sm-12">
+                {% if query %}
+                <div style="background-color: #e7ebfb;"><br><br>
+                  
+                  <h5 style="font-weight: 400; color: blue;">Answer:  {{ans}}</h5></div>
+                
+                {% endif %}
+              </div>
+            </div>
+
+            <h1 style="font-weight: 600;">Get Diet</h1>
+            <form action="{% url 'dietsuggestion' %}" method="POST">
+              {% csrf_token %}
+              <input
+                class="input-username"
+                id="text"
+                type="text"
+                name="Height"
+                placeholder="Height"
+                required="True"
+                class="form-control"
+              /><br /><br />
+              <input
+                class="input-username"
+                id="text"
+                type="text"
+                name="Weight"
+                placeholder="Weight"
+                required="True"
+                class="form-control"
+              /><br /><br />
+              <input
+                class="input-username"
+                id="text"
+                type="text"
+                name="Age"
+                placeholder="Age"
+                required="True"
+                class="form-control"
+              /><br /><br />
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

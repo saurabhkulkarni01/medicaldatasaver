@@ -181,7 +181,32 @@
       </div>
 
     </div>
-
+	<div class="containe">
+		<div class="row" style="margin-left: 10%">
+		  <div class="form">
+			{% if blogs %}
+				<h4 style="margin-top: 10px;">Blogs</h4>
+			{% endif %}
+			<hr style="height: 5px" />
+			
+			{% for blog in blogs %}
+			<a href="{% url 'blog'  user=user id=blog.id %}">
+			  <div style="align-items: left">
+				<br />
+				<span class="" style="color: black; font-weight: 500"
+				  >{{blog.heading}}</span
+				><br />
+				<h8>Topic : {{blog.topic}}</h8><br />
+				
+				<h8>Date: {{blog.date}}</h8><br />
+				<button class="btn btn-med btn-success">Read</button><br />
+			  </div>
+			</a>
+			<hr style="height: 5px" />
+			{% endfor %}
+		  </div>
+		</div>
+	  </div>
 <!--JS Library -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>

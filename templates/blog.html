@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Blog</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+	<style type="text/css">
+		.container{
+			margin-top: 2%;
+			background-image: url( '' );
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		.containerr{
+			margin-top: 2%;
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		input,select{
+			width: 300px!important;
+			border-radius: 0px!important;
+		}
+		.form{
+			margin: 10px auto;
+			width: auto;
+			height: auto;
+			text-align: center;
+		}
+		select{
+			height:30px;
+		}
+		button{
+			width: 140px;
+			border-radius: 0px!important;
+		}
+
+.login-container{
+  width: 640px;
+  height: 400px;
+  display: flex;
+}
+.field-text{
+	font-size: 7px;
+  color: #a7a7a7;
+}
+h8{
+    margin: 2%;
+}
+
+
+.container{
+    background-image: url('https://img.freepik.com/free-vector/healthcare-medical-blue-color_1017-26800.jpg?w=2000');
+    background-repeat: repeat;
+	box-shadow: 0 0 10px 5px;
+	border-radius: 15px;
+}
+.containerr{
+	box-shadow: 0 0 0px 0px;
+	border-radius: 15px;
+}
+
+h3{
+    margin-left: 30%;
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+div#main-card {
+    width: 1000px;
+    height: 400px;
+    box-shadow: -5px 2px 18px 4px #ccc;
+}
+
+.cover-photo {
+    background: #007bff;
+    
+}
+
+.photo {
+    /* background: #f9f9f9; */
+    width: 300px;
+    height: 300px;
+    /* display: -webkit-box;
+    display: -ms-flexbox; */
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+img {
+    position: relative;
+    top: 50px;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 50%; 
+}
+.content {
+    background: #f9f9f9;
+    /* width: 600px;   */
+    border-radius: 80px;
+    margin-left: 30%;
+    margin-top: -25%;
+    top: -35px;
+}
+
+.contact {
+    background: #30354d;
+    width: 00px;
+    height: 50px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+h2.name,
+h3,
+a {
+    margin: 0;
+    text-align: center;
+}
+
+h2.name {
+    padding-bottom: 20px;
+}
+
+h3.fullstack {
+    padding-bottom: 10px;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: black;
+}
+
+ul {
+    padding: 0;
+}
+
+.fa {
+    font-size: 22px;
+    padding: 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.fa:hover {
+    color: white;
+}
+
+a.certified {
+  color: black;
+  cursor: pointer;
+}
+
+a.certified:hover {
+  color: #007bff;
+}
+
+div#main-card:hover {
+    -webkit-animation-name: pulse;  
+    animation-name: pulse;
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+	</style>
+	</head>
+<body>
+ {% include "nav.html" %}
+ <div class="container">
+	<div class="row" style="margin-left:10%;">
+ <h3 style="margin-left: 30%; margin-top: 4%; margin-bottom: 2%; font-weight: 600; font-size: 30px;">{{blog.heading}}</h3>
+ <h8 style="font-weight: 500;font-size: 20px;">{{blog.blog}}</h8>
+ </div></div>
+ <div class="container">
+	<div class="row" style="margin-left:10%;">
+ <div id="main-card">
+    <!-- <div class="cover-photo"></div> -->
+    <div class="photo">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8RXgDHX_tlpyag1Qwy4LKDr6RmYj_98dZCA&usqp=CAU" alt="">
+    </div>
+    <div class="content">
+        <h3 style="color: blue;">Know The Doctor !</h3><br>
+        <h3>Topic: {{blog.topic}}</h3>
+        <h3 >Name: {{blog.doctor.name}}</h3>
+      <h3 class="fullstack">Specialization: {{blog.doctor.specialization.name}}<br />
+        <h3 class="email">
+            <a href="mailto:abbassi.abdeladhim31791@gmail.com">Email: {{blog.doctor.email}}</a><br>
+            <a href="">Phone: {{blog.doctor.phone}}</a><br>
+            <span class="button btn-warning btn btn-lg"><a href="{% url 'doctor_profile' id=blog.doctor.id %}">Profile</a></span>
+        </h3>
+        
+        
+    </div>
+    <div class="contact">
+        
+    </div>
+</div>
+
+
+        </div></div>
+
+</body>
+</html>

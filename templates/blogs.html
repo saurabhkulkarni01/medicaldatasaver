@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blogs</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    />
+    <style type="text/css">
+      .container {
+        margin-top: 2%;
+        background-image: url("");
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+      .containerr {
+        margin-top: 2%;
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+      input,
+      select {
+        width: 300px !important;
+        border-radius: 0px !important;
+      }
+      .form {
+        margin: 10px auto;
+        width: auto;
+        height: auto;
+        text-align: center;
+      }
+      select {
+        height: 30px;
+      }
+      button {
+        width: 140px;
+        border-radius: 0px !important;
+      }
+
+      .login-container {
+        width: 640px;
+        height: 400px;
+        display: flex;
+      }
+      .field-text {
+        font-size: 7px;
+        color: #a7a7a7;
+      }
+      h8 {
+        color: #000;
+      }
+
+      .container {
+        box-shadow: 0 0 10px 5px;
+        border-radius: 15px;
+      }
+      .containerr {
+        box-shadow: 0 0 0px 0px;
+        border-radius: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    {% include "nav.html" %} {% if user == "D" %}
+
+    <div class="containerr">
+      <div class="row" style="margin-left: 30%">
+        <a href="{% url 'addblog' user=user %}" style="margin: 5px"
+          ><span class="button btn-lg btn-warning">Add Blog</span></a
+        >
+        <a href="{% url 'myblog' %}" style="margin: 5px"
+          ><span class="button btn-lg btn-danger">My Blog</span></a
+        >
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+      <div class="row" style="margin-left: 10%">
+        <div class="form">
+          <hr style="height: 5px" />
+          {% for blog in allblogs %}
+          <a href="{% url 'blog'  user=user id=blog.id %}">
+            <div style="align-items: left">
+              <br />
+              <span class="" style="color: black; font-weight: 500"
+                >{{blog.heading}}</span
+              ><br />
+              <h8>Topic : {{blog.topic}}</h8><br />
+              <h8
+                >Doctor : {{blog.doctor.name}} ,
+                {{blog.doctor.specialization.name}}</h8
+              ><br />
+              <h8>Date: {{blog.date}}</h8><br />
+              <button class="btn btn-med btn-success">Read</button><br />
+            </div>
+          </a>
+          <hr style="height: 5px" />
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
