@@ -57,9 +57,36 @@ class Chemist(models.Model):
 	shopname = models.TextField()
 	ownername = models.TextField()
 	phone = models.TextField()
+	email = models.EmailField(unique=False, default=NULL)
 	address = models.TextField()
 	rating = models.FloatField(default=0)
-	username = models.OneToOneField(User,on_delete = models.CASCADE)
+	username = models.OneToOneField(User,on_delete = models.CASCADE, default=NULL)
+
+class Medicine(models.Model):
+	medicine = models.TextField()
+	allergies = models.TextField()
+	is_safeforchild = models.BooleanField( default=True)
+	note = models.TextField()
+	price = models.IntegerField()
+
+class ChemistMedicine(models.Model):
+	medicine = models.ForeignKey(Medicine,on_delete = models.CASCADE, default=NULL)
+	chemist = models.ForeignKey(Chemist,on_delete = models.CASCADE, default=NULL, null=True)
+	quantity = models.IntegerField(default=0)
+	datetime = models.DateTimeField(auto_now=True)
+
+class Pathologist(models.Model):
+	shopname = models.TextField()
+	ownername = models.TextField()
+	email = models.EmailField(unique=False, default=NULL)
+	phone = models.TextField()
+	address = models.TextField()
+	rating = models.FloatField(default=0)
+	username = models.OneToOneField(User,on_delete = models.CASCADE, default=NULL)
+
+class Test(models.Model):
+	test = models.TextField()
+	price = models.IntegerField(default=0)
 
 
 

@@ -37,6 +37,9 @@ urlpatterns = [
     path('doctor_profile/(?P<id>\d+)/$', doctor_profile , name = 'doctor_profile'),
     path('create_patient/', create_patient , name = 'create_patient'),
     path('myappointment/', myappointment , name = 'myappointment'),
+    path('mytests/', mytests , name = 'mytests'),
+    path('mymedicineorder/', mymedicineorder , name = 'mymedicineorder'),
+    path('addmedicine/', addmedicine , name = 'addmedicine'),
     path('docter_appointment/', docter_appointment , name = 'docter_appointment'),
     path('docter_prescription/', docter_prescription , name = 'docter_prescription'),
     path('create_prescription/', create_prescription , name = 'create_prescription'),
@@ -46,11 +49,17 @@ urlpatterns = [
     path('delete_docter/', delete_docter , name = 'delete_docter'),
     path('get_pdf/(?P<id>\d+)/$', get_pdf , name = 'get_pdf'),
     path('send_reminder/(?P<id>\d+)/$', send_reminder , name = 'send_reminder'),
-    
+    path('create_pathology/',createPathologist, name = 'create_pathology'),
+    path('create_chemist/',createChemist, name = 'create_chemist'),
+    path('appointment_details/(?P<user>.*)/(?P<id>\d+)/$', appoint_details , name = 'appointment_details'),
+    path('create_testappoint/',create_testappoint, name = 'create_testappoint'),
+    path('add_pathologist/',add_pathologist, name = 'add_pathologist'),
+    path('create_medicineappoint/',create_medicineappoint, name = 'create_medicineappoint'),
+    path('add_chemist/',add_chemist, name = 'add_chemist'),
+    path('chat/(?P<user>.*)/(?P<id>\d+)/$',chat,name = 'chat'),
+    path('addresult/(?P<id>\d+)/$',addresult,name = 'addresult'),
 
-
-
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL,document_root= settings.STATIC_ROOT)

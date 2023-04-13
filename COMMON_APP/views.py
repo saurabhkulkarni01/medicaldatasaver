@@ -25,6 +25,9 @@ from .sms import *
 from .chatgpt import getans
 from .whatsappsms import welcomemsg
 from .mail import welcomemail
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+
 # Create your views here.
 def home(request):
 	specs = Specialization.objects.all()
@@ -103,6 +106,20 @@ def login(request):
 						print('Docter has been Logged')
 						return redirect('dashboard',user = "D")	 					
 					except:
+						try:
+							data = Pathologist.objects.get(username = user )
+							auth.login(request,user_authenticate)				
+							print('Pathologist has been Logged')
+							return redirect('dashboard',user = "L")	 					
+						except:
+							try:
+								data = Chemist.objects.get(username = user )
+								auth.login(request,user_authenticate)				
+								print('Chemist has been Logged')
+								return redirect('dashboard',user = "C")	 					
+							except:
+								return redirect('/')
+							return redirect('/')
 						return redirect('/')			
 			else:
 				print('Login Failed')
@@ -201,14 +218,54 @@ def profile(request, user):
 		userdata = Patient.objects.get(username=userid)
 		return render(request  , 'patient_profile.html',{'userdata' : userdata , 'user':user, "status": status})
 
-	else:
+	if user == "D":
 		userdata  = Docter.objects.get(username=userid)
 		return render(request  , 'docter_profile.html',{'userdata' : userdata , 'user':user, "status": status})
 
 
 	return redirect('/')
 
+def createPathologist(request):
+	if request.method == 'POST':
+		print(request.POST['post'])
+		
+		try:
+			user = User.objects.get(username=request.POST['username'])
+			print(user)
+			return render(request,'Pathologistregister.html')
+		except User.DoesNotExist:
+			user = User.objects.create_user(username=request.POST['username'],password=request.POST['pass1']) 
+			new = Pathologist(phone=request.POST['phone'],ownername=request.POST['ownername'],shopname=request.POST['shopname'],email=request.POST['email'],username=user,address=request.POST['address'])	
+			new.save()	
 
+
+			return render(request , 'home.html',{"user":"L"})
+			
+	
+			print('Registered Successfully')
+			return render(request,'register.html')
+	return render(request  , 'PathologistRegister.html')
+	pass
+
+def createChemist(request):
+	if request.method == 'POST':
+		print(request.POST['post'])
+		
+		try:
+			user = User.objects.get(username=request.POST['username'])
+			print(user)
+			return render(request,'ChemistRegister.html')
+		except User.DoesNotExist:
+			user = User.objects.create_user(username=request.POST['username'],password=request.POST['pass1']) 
+			new = Chemist(phone=request.POST['phone'],ownername=request.POST['ownername'],shopname=request.POST['shopname'],email=request.POST['email'],username=user,address=request.POST['address'])	
+			new.save()	
+
+
+			return render(request , 'home.html',{"user":"C"})
+			
+	 
+	return render(request  , 'ChemistRegister.html')
+	pass
 
 def dashboard(request , user):
 	print(user)
@@ -410,6 +467,45 @@ def myappointment(request):
 		appoint.save() 
 	return render(request , 'my_appointment.html' , {'data':data, 'user' :"P" , 'status':status})
 
+def mytests(request):
+	status = False
+	if request.user:
+		status = request.user
+	user_id = User.objects.get(username=request.user)
+	pathologist= Pathologist.objects.get(username=user_id)
+	data = TestAppointment.objects.filter(pathologist=pathologist)
+	return render(request , 'my_tests.html' , {'data':data, 'user' :"L" , 'status':status})
+
+def mymedicineorder(request):
+	status = False
+	if request.user:
+		status = request.user
+	user_id = User.objects.get(username=request.user)
+	chemist= Chemist.objects.get(username=user_id)
+	data = MedicineAppointment.objects.filter(chemist=chemist)
+	return render(request , 'my_medicines.html' , {'data':data, 'user' :"C" , 'status':status})
+
+def addmedicine(request):
+	status = False
+	if request.user:
+		status = request.user
+	user_id = User.objects.get(username=request.user)
+	chemist= Chemist.objects.get(username=user_id)
+	allmedicines = Medicine.objects.all()
+	data = ChemistMedicine.objects.filter(chemist=chemist)
+	if request.method == "POST":
+		medicine = Medicine.objects.get(id = request.POST['medicine'])
+		quantity = int(request.POST['quantity'])
+		chemmed = ChemistMedicine.objects.get_or_create(chemist=chemist, medicine = medicine)[0]
+		print(quantity, type(quantity),chemmed)
+		chemmed.quantity +=  quantity
+		today_date = datetime.datetime.today()
+		chemmed.datetime = today_date
+		chemmed.save()
+		data = ChemistMedicine.objects.filter(chemist=chemist)
+		return render(request , 'addmedicines.html' , {'data':data, 'user' :"C" , 'status':status,'medicines':allmedicines})
+		pass
+	return render(request , 'addmedicines.html' , {'data':data, 'user' :"C" , 'status':status,'medicines':allmedicines})
 
 # Docter Appointsments
 
@@ -857,13 +953,7 @@ def delete_docter(request):
 
 # Patient invoice 
 def patient_invoice(request):
-	status = False
-	if request.user:
-		status = request.user
-	user_id =  User.objects.get(username = request.user)
-	p = Patient.objects.get(username = user_id)
-	data = Prescription2.objects.filter(patient = p)
-	return render(request , 'patient_invoice.html' , {'data':data , 'user' : 'P' , 'status' : status})
+	pass
 
 
 
@@ -881,26 +971,211 @@ def about(request):
 
 #  Invoice Generator
 def get_pdf(request , id):
-	data = Prescription2.objects.get(id=id)
-	pdf_data = {'data':data}
-	template = get_template('invoice.html')
-	data_p = template.render(pdf_data)
-	response = BytesIO()
-	pdf_page = pisa.pisaDocument(BytesIO(data_p.encode('UTF_8')),response)
-	if not pdf_page.err:
-		return HttpResponse(response.getvalue(),content_type = 'application/pdf')
-	else:
-		return HttpResponse('Error')
+	pass
 
 
 
 
 # Send Reminder
 def send_reminder(request,id):
-	p = Prescription2.objects.get(id=id)
-	email = p.patient.email
-	subject = 'Payment Reminder '
-	message = 'Your Due Amount is {} outstanding and {} rs. you have already paid'.format(p.outstanding,p.paid)
-	recepient = [email]
-	send_mail(subject, message, EMAIL_HOST_USER, recepient, fail_silently = False)
-	return redirect('hr_accounting')
+	pass
+
+def appoint_details(request , user, id):
+	status = False
+	if request.user:
+		status = request.user
+	appointment = Appointment.objects.get(id=id)
+	testappoint = TestAppointment.objects.filter(appointment = appointment)
+	
+	try:
+		prescription = Prescription2.objects.get(appointment = appointment)
+	except:
+		prescription = NULL
+	tests = Test.objects.all()
+	medicines = Medicine.objects.all()
+	print(medicines,"123")
+	chemists = Chemist.objects.all()
+	medicineappoint = MedicineAppointment.objects.filter(appointment = appointment)
+	print(appointment)
+	pathologists = Pathologist.objects.all()
+	return render(request , 'appointmentdetails.html' , {'pathologists':pathologists,'chemists':chemists,'medicines':medicines,'medicineappointment':medicineappoint , 'appointment':appointment,'tests':tests, 'testappointment': testappoint, 'prescription':prescription, 'user' :user , 'status':True} )
+	pass
+
+def create_testappoint(request):
+	status = False
+	if request.user:
+		status = request.user
+	
+	if request.method == "POST":
+		appointment = Appointment.objects.get(id=request.POST['appointment'])
+		test = Test.objects.get(id = request.POST['test'])
+		paathtest = Pathologist.objects.get(ownername = "test", shopname ="test")
+		new_prescrition = TestAppointment(appointment = appointment, test = test, pathologist = paathtest )
+		new_prescrition.save()
+		testappoint = TestAppointment.objects.filter(appointment = appointment)
+		try:
+			prescription = Prescription2.objects.get(appointment = appointment)
+		except:
+			prescription = NULL
+		pathologists = Pathologist.objects.all()
+		medicines = Medicine.objects.all()
+		chemists = Chemist.objects.all()
+		medicineappoint = MedicineAppointment.objects.filter(appointment = appointment)
+		tests = Test.objects.all()
+		return render(request , 'appointmentdetails.html' , {'pathologists':pathologists,'chemists':chemists,'medicines':medicines,'medicineappointment':medicineappoint , 'appointment':appointment,'tests':tests, 'testappointment': testappoint, 'prescription':prescription, 'user' :"D" , 'status':True} )
+	print(appointment)
+	pass
+	
+def add_pathologist(request):
+	status = False
+	if request.user:
+		status = request.user
+	
+	if request.method == "POST":
+		
+		# test = Test.objects.get(id = request.POST['test'])
+		testAppoint = TestAppointment.objects.get(id = request.POST['test'])
+		pathologist = Pathologist.objects.get(id=request.POST['pathologist'])
+		appointment = testAppoint.appointment
+		testAppoint.pathologist = pathologist
+		testAppoint.status = 1
+		testAppoint.save()
+		testappoint = TestAppointment.objects.filter(appointment = appointment)
+		try:
+			prescription = Prescription2.objects.get(appointment = appointment)
+		except:
+			prescription = NULL
+		pathologists = Pathologist.objects.all()
+		medicines = Medicine.objects.all()
+		chemists = Chemist.objects.all()
+		medicineappoint = MedicineAppointment.objects.filter(appointment = appointment)
+		tests = Test.objects.all()
+		return render(request , 'appointmentdetails.html' , {'pathologists':pathologists,'chemists':chemists,'medicines':medicines,'medicineappointment':medicineappoint , 'appointment':appointment,'tests':tests, 'testappointment': testappoint, 'prescription':prescription, 'user' :"P" , 'status':True} )
+	print(appointment)
+	pass
+
+def create_medicineappoint(request):
+	status = False
+	if request.user:
+		status = request.user
+	
+	if request.method == "POST":
+		appointment = Appointment.objects.get(id=request.POST['appointment'])
+		medicine = Medicine.objects.get(id = request.POST['medicine'])
+		chemtest = Chemist.objects.get(ownername = "test", shopname ="test") 
+		dailytime = request.POST['dailytime']
+		quantity = request.POST['quantity']
+		fordays = request.POST['fordays']
+		eachdosequantity = request.POST['eachdosequantity']
+		new_prescrition = MedicineAppointment(appointment = appointment, medicine = medicine, chemist = chemtest,dailytime = dailytime, quantity = quantity, fordays = fordays, eachdosequantity = eachdosequantity )
+		new_prescrition.save()
+		testappoint = TestAppointment.objects.filter(appointment = appointment)
+		medicineappoint = MedicineAppointment.objects.filter(appointment = appointment)
+		try:
+			prescription = Prescription2.objects.get(appointment = appointment)
+		except:
+			prescription = NULL
+		pathologists = Pathologist.objects.all()
+		medicines = Medicine.objects.all()
+		chemists = Chemist.objects.all()
+		medicineappoint = MedicineAppointment.objects.filter(appointment = appointment)
+		tests = Test.objects.all()
+		return render(request , 'appointmentdetails.html' , {'pathologists':pathologists,'chemists':chemists,'medicines':medicines,'medicineappointment':medicineappoint , 'appointment':appointment,'tests':tests, 'testappointment': testappoint, 'prescription':prescription, 'user' :"D" , 'status':True} )
+	print(appointment)
+	pass
+	
+def add_chemist(request):
+	status = False
+	if request.user:
+		status = request.user
+	error = ""
+	if request.method == "POST":
+		medicineAppoint = MedicineAppointment.objects.get(id = request.POST['medicine'])
+		chemist = Chemist.objects.get( id = request.POST['chemist'])
+		appointment = medicineAppoint.appointment
+		price = 0
+		try:
+			medchem = ChemistMedicine.objects.get(chemist = chemist, medicine = medicineAppoint.medicine)
+			if medchem.quantity >= medicineAppoint.quantity :
+				medicineAppoint.chemist = chemist
+				medicineAppoint.status = 1
+				medicineAppoint.save()
+				medchem.quantity -= medicineAppoint.quantity
+				medchem.save()
+				price = medicineAppoint.quantity * medicineAppoint.medicine.price
+			else :
+				error = "Medicine stocks are not available"
+		except: 
+			error = "Medicine not available at this chemist try another one"
+		testappoint = TestAppointment.objects.filter(appointment = appointment)
+		try:
+			prescription = Prescription2.objects.get(appointment = appointment)
+		except:
+			prescription = NULL
+		pathologists = Pathologist.objects.all()
+		medicines = Medicine.objects.all()
+		chemists = Chemist.objects.all()
+		medicineappoint = MedicineAppointment.objects.filter(appointment = appointment)
+		tests = Test.objects.all()
+		return render(request , 'appointmentdetails.html' , {'price':price, 'pathologists':pathologists,'chemists':chemists,'medicines':medicines,'medicineappointment':medicineappoint , 'appointment':appointment,'tests':tests, 'testappointment': testappoint, 'prescription':prescription, 'user' :"P" , 'status':True, 'error':error} )
+	print(appointment)
+	pass
+
+def addresult(request,id):
+	specs = Specialization.objects.all()
+	test = TestAppointment.objects.get(id=id)
+	if request.user:
+		status = request.user
+	if request.method == "POST":
+		date = request.POST['date']
+		result = request.FILES['testreport']
+		price = request.POST['price']
+		fs = FileSystemStorage()
+		name = test.id
+		filename = fs.save(name, result)
+		uploaded_file_url = fs.url(filename)
+		test.reporturl = uploaded_file_url
+		test.status = 2
+		test.price = price
+		test.save()
+		print(date, type(result), uploaded_file_url)
+		user_id = User.objects.get(username=request.user)
+		pathologist= Pathologist.objects.get(username=user_id)
+		data = TestAppointment.objects.filter(pathologist=pathologist)
+		return render(request , 'my_tests.html' , {'data':data, 'user' :"L" , 'status':status})
+		return render(request , 'create_testresult.html' , {"specs":specs,'user':"L",'test':test,'status':True,'url':uploaded_file_url})
+	return render(request , 'create_testresult.html' , {"specs":specs,'user':"L",'test':test,'status':True})
+
+def chat(request,user,id):
+	status = False
+	if request.user:
+		status = request.user
+	duser = request.user
+	try:
+		doc = Docter.objects.get(username = duser)
+		user2 = User.objects.get(id = id)
+		pat = Patient.objects.get(username = user2)
+		chats = Chat.objects.filter(doctor = doc, patient = pat).order_by('datetime')		
+	except:
+		pat = Patient.objects.get(username = duser)
+		user2 = User.objects.get(id = id)
+		doc = Docter.objects.get(username = user2)
+		chats = Chat.objects.filter(patient = pat, doctor = doc).order_by('datetime')
+	if request.method == "POST":
+		message = request.POST['message']
+		try:
+			doc = Docter.objects.get(username = duser)
+			user2 = User.objects.get(id = id)
+			pat = Patient.objects.get(username = user2)
+			newchat = Chat(doctor = doc, patient = pat, message = message, pattodoct=False )
+			newchat.save()	
+			chats = Chat.objects.filter(doctor = doc, patient = pat).order_by('datetime')
+		except:
+			pat = Patient.objects.get(username = duser)
+			user2 = User.objects.get(id = id)
+			doc = Docter.objects.get(username = user2)
+			newchat = Chat(doctor = doc, patient = pat, message = message, pattodoct=True )
+			newchat.save()	
+			chats = Chat.objects.filter(patient = pat, doctor = doc).order_by('datetime')
+		return render(request,'chat.html',{'user':user,'status':status, 'chats':chats, 'user2':user2})
+	return render(request,'chat.html',{'user':user,'status':status, 'chats':chats, 'user2':user2})

@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tests </title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+	<style type="text/css">
+		.container{
+      margin-top: 30px;
+    }
+	</style>
+	</head>
+<body>
+ {% include "nav.html" %}
+
+
+
+
+ 
+<div class="container">
+<div class="row">
+	<div class="col-sm-12">
+    <h3 style="text-align: center; font-weight: 700; " >Upcoming Tests!</h3><br>
+	
+		<table class="table">
+  <thead>
+
+    <tr>
+        <th scope="col">Test Name</th>
+        <th scope="col">Date and Time</th>
+      <th scope="col">Test Date and Time</th>
+      <th scope="col">Result Date</th>
+      
+      <th scope="col">Patient</th>
+      <th scope="col">Status</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+
+    </tr>
+  </thead>
+  <tbody>
+  	  	{% for data in data %}
+    <tr>
+      <th scope="row">{{ data.test.test }}</th>
+      <th scope="row">{{ data.datetime }}</th>
+      <td scope="row"> {{ data.testdatetime }}</td>
+      <td scope="row"> {{ data.resultdatetime }}</td>
+      <td scope="row"> {{ data.appointment.patientid.name }}</td>
+
+      <!-- <td> {{ data.patientid.name }}</td> -->
+      {% if data.status == 1 %}
+      <td scope="row">Pending</td>
+      <td  ><a class="btn btn-warning"  href="{% url 'cancel_appoint_doct' id=data.id %}">Cancel</a></td>
+      <td  ><a class="btn btn-warning"  href="{% url 'addresult' id=data.id %}">Add Report</a></td>
+      {% elif data.status == 3 %}
+      <td scope="row">Cancelled</td>
+      {% else %}
+      <td scope="row">Done</td>
+      {% endif %}
+      
+
+        
+
+    </tr>
+    {% endfor %}
+   
+  </tbody>
+</table>
+
+  </div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" ></script>
+</body>
+</html>

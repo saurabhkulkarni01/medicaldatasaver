@@ -5,7 +5,8 @@
   width: 100%; /* Full width */
  }
 </style>
-<nav class="navbar navbar-expand-lg navbar-light bg-primary">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-primary" style=" z-index: 10000;">
   <a class="navbar-brand text-light" href="#">MedHistory</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -33,7 +34,7 @@
       </li>
       {% endif %}
       {% if status and user == "P" %}
-<li class="nav-item active">
+      <li class="nav-item active">
         <a class="nav-link text-light" href="{% url 'myappointment' %}">Your Appointments <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
@@ -65,6 +66,43 @@
       </li>
       <li class="nav-item active">
         <a class="nav-link text-light" href="{% url 'block_slot'  %}">Block Slot <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'allblogs' user=user %}">Blogs <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'profile' user=user %}">Profile <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'consulting'  %}">Query <span class="sr-only">(current)</span></a>
+      </li>
+     <li class="nav-item active">
+        <a class="nav-link text-light" href="/logout">Logout <span class="sr-only">(current)</span></a>
+      </li>
+      {% endif %}
+      {% if status and user == "L" %}
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'allblogs' user=user %}">Blogs <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'profile' user=user %}">Profile <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'mytests' %}">Tests <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'consulting'  %}">Query <span class="sr-only">(current)</span></a>
+      </li>
+     <li class="nav-item active">
+        <a class="nav-link text-light" href="/logout">Logout <span class="sr-only">(current)</span></a>
+      </li>
+      {% endif %}
+      {% if status and user == "C" %}
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'mymedicineorder' %}">Medicine Orders <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="{% url 'addmedicine' %}">Medicine Stock <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
         <a class="nav-link text-light" href="{% url 'allblogs' user=user %}">Blogs <span class="sr-only">(current)</span></a>

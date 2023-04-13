@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from DOCTER.models import *
 from PATIENT.models import *
+from django import forms
 # Create your models here.
 
 # Model For Appointment
@@ -29,13 +30,41 @@ class notification(models.Model):
 	to_doctor = models.BooleanField(default=False)
 	to_patient = models.BooleanField(default=False)
 
+class TestAppointment(models.Model):
+	status = models.IntegerField(default=0)
+	datetime = models.DateTimeField(auto_now=True)
+	appointment = models.ForeignKey(Appointment,on_delete = models.CASCADE, default=NULL)
+	test = models.ForeignKey(Test,on_delete = models.CASCADE, default=NULL)
+	pathologist = models.ForeignKey(Pathologist,on_delete = models.CASCADE, default=NULL, null=True)
+	price = models.IntegerField(default=500)
+	reporturl = models.TextField(blank=True, default="")
 
+class MedicineAppointment(models.Model):
+	appointment = models.ForeignKey(Appointment,on_delete = models.CASCADE, default=NULL)
+	medicine = models.ForeignKey(Medicine,on_delete = models.CASCADE, default=NULL)
+	chemist = models.ForeignKey(Chemist,on_delete = models.CASCADE, default=NULL, null=True)
+	price = models.IntegerField(default=500)
+	dailytime = models.IntegerField(default=1)
+	quantity = models.IntegerField(default=0)
+	fordays = models.IntegerField(default=7)
+	eachdosequantity = models.TextField()
+	status = models.IntegerField(default=0)
+	datetime = models.DateTimeField(auto_now=True)
+	# file = forms.FileField(default = NULL )
+
+class Chat(models.Model):
+	message = models.TextField()
+	doctor = models.ForeignKey(Docter, on_delete=models.CASCADE, default=NULL)
+	patient = models.ForeignKey(Patient, on_delete=models.CASCADE, default=NULL)
+	datetime = models.DateTimeField(auto_now=True)
+	pattodoct = models.BooleanField(default=True)
 
 class ChemistAppointment(models.Model):
 	status = models.IntegerField(default=0)
 	medicinelist = models.TextField()
 	appointment = models.ForeignKey(Appointment,on_delete = models.CASCADE, null=True, blank=True, default=NULL)
 	chemist = models.ForeignKey(Chemist,on_delete = models.CASCADE, null=True, blank=True, default=NULL)
+	datetime = models.DateTimeField(auto_now=True)
 
 
 

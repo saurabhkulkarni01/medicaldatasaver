@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Add test Result</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+	<style type="text/css">
+		.container{
+			margin-top: 2%;
+			background-image: url( 'https://media.istockphoto.com/vectors/medical-checkup-concept-vector-id1330258945?k=20&m=1330258945&s=612x612&w=0&h=SiMvrJJu3-IZvzuxakeAobxthrfVJiwWCSnqW2K8CnY=' );
+			filter: blur(px);
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		input,select{
+			width: 300px!important;
+			border-radius: 0px!important;
+		}
+		form{
+			margin: 120px auto;
+			width: 300px;
+			height: 450px;
+			text-align: center;
+		}
+		select{
+			height:30px;
+		}
+		button{
+			width: 140px;
+			border-radius: 0px!important;
+		}
+
+.login-container{
+  width: 640px;
+  height: 400px;
+  display: flex;
+}
+.field-text{
+	font-size: 7px;
+  color: #a7a7a7;
+}
+.login-container-content .login-form .buttonX{
+			position: absolute;
+			right: 2%;
+			top: 2%;
+			border: none;
+			background: transparent;
+			outline: none;
+		}
+.login-container-content .login-form h1{
+			letter-spacing: 1rem;
+			color: transparent;
+			-webkit-background-clip: text;
+			background-clip: text;
+			background-image: linear-gradient(45deg, #6767ED 45%, #4DAEF2 75%);
+			font-family: "Aguafina Script",Arial, Helvetica, sans-serif;
+			
+		}
+		.login-container-content .login-form .field input :focus{
+					border-bottom-color: #1838e7;
+				}
+.login-container-content .login-form .field input{
+				outline: none;
+					border-top: none;
+					border-left: none;
+					border-right: none;
+					border-bottom: 1px solid grey;
+				
+				
+			}
+.login-container-content .login-form .field{
+			margin: 10px auto;
+			padding: 5px;
+			width: 75%;
+			height: 25%;
+			display: grid;
+			grid-row-gap: 0.2rem;
+			/* &>label, &>input{
+				text-align: left;
+			}
+			&>label, &>a{
+				@extend .field-text;
+			} */
+			
+		}
+.login-container-content .login-form{
+		padding: 2px;
+		width: 100%;
+		/* // overflow: hidden; */
+		
+		
+	}
+.login-container-content{
+  flex: 50%;
+  background: white;
+  text-align: center;
+	display: flex;
+	align-items: center;
+	
+	
+	
+}
+.login-container-img{
+  flex: 50%;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgmvrOKWUUuUI5_nBNqU834UX4IRUdqk4RgFOAAlYn5QxJswaCNXUo_EwYkEzkHlYe1Eg&usqp=CAU');
+  background-size: cover;
+	
+  
+}
+.container{
+	box-shadow: 0 0 15px 5px;
+	border-radius: 15px;
+}
+
+
+
+	</style>
+	</head>
+<body>
+	<!-- prescription = models.CharField(max_length=200)
+  
+  note = models.TextField( blank=True, null=True)-->
+
+ {% include "nav.html" %}
+ <h>{{user}}</h>
+ <div class="container">
+<div class="row" style="margin-left:60%;">
+<form action="{% url 'addresult' id=test.id %}" method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+    <h7 class="form-control">Test: {{test.test.test}}</h7><br>
+    <h7 class="form-control">Patient: {{test.appointment.patientid.name}}</h7><br>
+    <h7 class="form-control">Patient Phone:: {{test.appointment.patientid.phone}}</h7><br>
+    <h7 class="form-control">Patient Email:: {{test.appointment.patientid.email}}</h7><br>
+	<input type="number" name = "price" placeholder="price" class="form-control"><br>
+    <p align="left">Estimated Result date</p>
+    <input type="date" name = "date" placeholder="Report date" class="form-control"><br>
+    <p align="left">Result Pdf</p>
+	<input type="file" name = "testreport" placeholder="report" class="form-control"><br>
+<input type="submit" name="Submit" value="Submit" class="btn btn-primary" />
+</form>
+{% if url %}
+<p>File uploaded at: <a href="{{ url }}">{{ url }}</a></p>
+{% endif %}
+</div></div>
+<h1>{{user}}</h1>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" ></script>
+</body>
+</html>

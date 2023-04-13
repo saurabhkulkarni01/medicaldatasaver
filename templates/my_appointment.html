@@ -76,13 +76,15 @@
         <td  ><a class="btn btn-warning"  href="{% url 'patient_history' id=data.patientid.id %}">History</a></td>
         {% endif %}
         <td  ><a class="btn btn-warning"  href="{% url 'cancel_appoint_doct' id=data.id %}">Cancel</a></td>
-
+          <td><a class="btn btn-primary" href="{% url 'chat' user=user id=data.patientid.username.id %}">Chat</a></td>
       {% endif %}
       {% else %}
       <td  ><a class="btn btn-warning"  href="{% url 'cancel_appoint_pat' id=data.id %}">Cancel</a></td>
+      <td><a class="btn btn-primary" href="{% url 'chat' user=user id=data.docterid.username.id %}">Chat</a></td>
       {% endif %}
       {% endif %}
       {% endif %}
+      <td ><a class="btn btn-success"  href="{% url 'appointment_details' user=user id=data.id %}">Details</a></td>
     </tr>
     {% endfor %}
    

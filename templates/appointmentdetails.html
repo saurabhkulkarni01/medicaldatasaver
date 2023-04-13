@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Appointment details</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+	<style type="text/css">
+		.container{
+			margin-top: 2%;
+			background-image: url( 'https://img.freepik.com/premium-vector/medical-insurance-doctor-s-appointmentment-examination-medical-history-healthcare_501173-380.jpg?w=2000' );
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+        .containerr{
+			margin-top: 2%;
+			margin-left: 2%;
+			margin-right: 2%;
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		/* .containerr{
+			margin-top: 2%;
+			background-repeat: no-repeat;
+			background-size: contain;
+		} */
+		input,select{
+			width: 300px!important;
+			border-radius: 0px!important;
+		}
+		.form{
+			margin: 10px auto;
+			width: auto;
+			height: auto;
+			text-align: center;
+		}
+		select{
+			height:30px;
+		}
+		button{
+			width: 140px;
+			border-radius: 0px!important;
+		}
+
+.login-container{
+  width: 640px;
+  height: 400px;
+  display: flex;
+}
+.field-text{
+	font-size: 7px;
+  color: #a7a7a7;
+}
+
+
+
+.container{
+	box-shadow: 0 0 10px 5px;
+	border-radius: 15px;
+}
+.containerr{
+	box-shadow: 0 0 10px 5px;
+	border-radius: 15px;
+}
+
+
+
+
+	</style>
+</head>
+<body>
+	
+
+  {% include "nav.html" %}
+  {% if error %}
+	<div >
+	  <div class="row">
+	   <div class="col-sm-6 ">
+  <h2 class="alert alert-danger" >{{error}}</h2>
+	</div> 
+  
+	{% endif %}
+  {% if appointment.is_cancelled %}
+  <div class="container" style="background-image:'' ;">
+	<div class="row" style="margin-left:30%;">
+		<div class="form" >
+            <h1>Appointment Cancelled</h1>
+            {% if appointment.cancelled_by_doct %}
+                <h2>Doctor Canclled the  appointment</h2>
+            {% endif %}
+            {% if not appointment.cancelled_by_doct %}
+            <h2>Patient Canclled the  appointment</h2>
+            {% endif %}
+ <p>Reason: {{appointment.cancellation_reason}}</p>
+</div>
+</div>
+</div>
+  {% endif %}
+  <div class="container" style="background-image:'' ;">
+	<div class="row" style="margin-left:30%;">
+		<div class="form" >
+            <h1>Doctor Details</h1>
+ <p>Doctor Name: {{appointment.docterid.name}}</p>
+ <p>Doctor Mobile No: {{appointment.docterid.phone}}</p>
+ <p>Doctor Email: {{appointment.docterid.email}}</p>
+ <p>Doctor Address: {{appointment.docterid.address}}</p>
+ <p>Doctor Specialization: {{appointment.docterid.specialization.name}} </p>
+</div>
+</div>
+</div>
+<div class="container" style="background-image:'' ;">
+	<div class="row" style="margin-left:30%;">
+		<div class="form" >
+            <h1>Patient Details</h1>
+ <p>Patient Name: {{appointment.patientid.name}}</p>
+ <p>Patient Mobile No: {{appointment.patientid.phone}}</p>
+ <p>Patient Email: {{appointment.patientid.email}}</p>
+ <p>Patient Address: {{appointment.patientid.address}}</p> 
+</div>
+</div>
+</div>
+{% if tests != null %}
+
+{% endif %}
+{% if prescription  %}
+<div class="container">
+	<div class="row" style="margin-left:55%;">
+		<div class="form" >
+ <!-- <div class="panel panel-default bg-success">
+  <div class="panel-body"><h3> -->
+    <h1>Prescription details</h1>
+	{{ prescription.prescripted_date }}</h3>
+    <span class="form-control">Symptoms : {{ prescription.symptoms}}</span><br>
+		<span class="form-control">Prescription : {{ prescription.prescription }}</span><br>
+		<span class="form-control">note : {{prescription.note}}</span><br>
+		 <span class="form-control">Pulse Rate : {{prescription.pulse_rate}}</span><br>
+		 <span class="form-control">blood_pressure : {{prescription.blood_pressure}}</span><br>
+		 <span class="form-control">Weight : {{prescription.weight}}</span><br>
+
+  </div>
+</div><br>
+</div>
+{% endif %}
+
+ 
+  
+</div>
+</div>
+<!-- {% for appointment in availibility  %}
+<p>{{appointment.start}} - {{appointmentment.end}}</p>
+{% if appointment.f %} <p>Not Available</p>
+{%else%} <p>Available</p>
+{% endif %}
+{% endfor %} -->
+{% if availibility %}
+<div class="container-fluid mb-4">
+	<h7>{{avail_date}}</h7>
+	<div class="row justify-content-center row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+		
+		{% for appointment in availibility  %}
+		{% if appointment.f%}
+		<div class="col mt-4">
+		<div class="card" style="background-color: rgb(239, 141, 141);">
+			<p>{{appointment.start}}:{{appointment.start_min}} - {{appointment.end}}:{{appointment.end_min}} :   Not Available  </p>
+		  
+		</div>
+	  </div>
+	  {% else %}
+	  <div class="col mt-4">
+		<div class="card" style="background-color: rgb(129, 216, 129);">
+			<p>{{appointment.start}}:{{appointment.start_min}} - {{appointment.end}}:{{appointment.end_min}} :    Available  </p>
+		  
+		</div>
+	  </div>
+	  {% endif %}
+	  {% endfor %} 
+	</div>
+  </div>
+  {% endif %}
+  {% if user == "D" %}
+  <div class="container">
+    <div class="row" style="margin-left:60%;">
+        <form action="{% url 'create_testappoint' %}" method="POST">
+            <h5 style="font-weight: 700;" >Add Test</h5><br>
+            {% csrf_token %} 
+           <!-- <p align="left" style="display: none;">Docter Name</p> -->
+           <select name="appointment" style="visibility:hidden ;" >
+			   
+            <option  value="{{ appointment.id }}">{{ appointment.id }} </option>
+              
+             </select>
+                     <div class="form-group" >
+                        <select name="test" >
+                            {% for test in tests %}
+                              <option  value="{{ test.pk }}">{{ test.test }}  </option>
+                                {% endfor %}
+                               </select>
+                    </div>
+                     <button type="submit" class="form-control btn-primary">Submit</button>
+                     </form>
+          </div>
+          
+          </div>
+    
+        </div>
+    {% endif %}
+    {% if user == "D" %}
+  <div class="containerr">
+    <div class="row" style="margin-left:60%;">
+        <form action="{% url 'create_medicineappoint' %}" method="POST">
+            <h5 style="font-weight: 700;" >Add Medicine</h5><br>
+            {% csrf_token %} 
+           <!-- <p align="left" style="display: none;">Docter Name</p> -->
+           <select name="appointment" style="visibility:hidden ;" >
+			   
+            <option  value="{{ appointment.id }}">{{ appointment.id }} </option>
+              
+             </select>
+                     <div class="form-group" >
+                        <select name="medicine" >
+                            {% for medicine in medicines %}
+                              <option  value="{{ medicine.pk }}">{{ medicine.medicine }}  </option>
+                                {% endfor %}
+                        </select>
+                    </div>
+                    <input type="number" name="dailytime" placeholder="Daily How many Times" required="True" class="form-control"><br> 
+                    <input type="number" name="quantity" placeholder="Net Quantity" required="True" class="form-control"><br> 
+                    <input type="number" name="fordays" placeholder="For ow many days" required="True" class="form-control"><br> 
+                    <input type="text" name="eachdosequantity" placeholder="Each Dose Quantity" required="True" class="form-control"><br> 
+                     <button type="submit" class="form-control btn-primary">Submit</button>
+                     </form>
+          </div>
+          
+          </div>
+    
+        </div>
+    {% endif %}
+    <div class="containerr">
+		<div class="row" style="margin-left: 10%">
+		  <div class="form">
+			{% if testappointment %}
+				<h4 style="margin-top: 10px;">Tests</h4>
+			{% endif %}
+			<hr style="height: 5px" />
+			
+			{% for test in testappointment %}
+			
+			  <div style="align-items: left">
+				<br />  
+				{% if user == "P" and test.status == 0 %}
+                <form action="{% url 'add_pathologist' %}" method="POST">
+                    <h5 style="font-weight: 700;" >Add Pathologist</h5>
+                    {% csrf_token %} 
+                   <!-- <p align="left" style="display: none;">Docter Name</p> -->
+                   <select name="test" style="visibility:hidden ;" >
+                       
+                    <option  value="{{ test.id }}">{{ test.id }} </option>
+                      
+                     </select>
+                             <div class="form-group" >
+                                <select name="pathologist" >
+                                    {% for pathologist in pathologists %}
+                                      <option  value="{{ pathologist.pk }}">{{ pathologist.shopname }}  </option>
+                                        {% endfor %}
+                                       </select>
+                            </div>
+                             <button type="submit" class="form-control btn-primary">Submit</button>
+                             </form>
+							 
+                {% endif %}
+                {% if user == "P" and test.status == 1 %}
+                             <h8>Pathologist : {{test.pathologist.shopname}}</h8><br><br>
+                             <h8>Patologist Address : {{test.pathologist.address}}</h8><br>
+                {% endif %}
+                {% if test.status == 2 %}
+                <h8>Status: Completed</h8><br> 
+                <p class="btn btn-warning"> <a href="{{ test.reporturl }}">Download Test Result</a></p><br>
+                {% if user == "P" %}
+                <h8>Price: {{test.price}}</h8><br>
+                {% endif %}
+                {% endif %}
+				<h8>Status : {{test.status}}</h8><br />
+				
+				<h8>Date: {{test.datetime}}</h8><br />
+				
+			  </div>
+			</a>
+			<hr style="height: 5px" />
+			{% endfor %}
+		  </div>
+		</div>
+	  </div>
+      <div class="containerr">
+		<div class="row" style="margin-left: 10%">
+		  <div class="form">
+			{% if Medicineappointment %}
+				<h4 style="margin-top: 10px;">Medicines</h4>
+			{% endif %}
+			<hr style="height: 5px" />
+			
+			{% for medicine in medicineappointment %}
+			<h8>Medicine : {{medicine.medicine.medicine}}</h8><br />
+			  <div style="align-items: left">
+				<br />
+				{% if user == "P" and medicine.status == 0 %}
+                <form action="{% url 'add_chemist' %}" method="POST">
+                    <h5 style="font-weight: 700;" >Add Chemist</h5>
+                    {% csrf_token %} 
+                   <!-- <p align="left" style="display: none;">Docter Name</p> -->
+                   <select name="medicine" style="visibility:hidden ;" >
+                       
+                    <option  value="{{ medicine.id }}">{{ medicine.id }} </option>
+                      
+                     </select>
+                             <div class="form-group" >
+                                <select name="chemist" >
+                                    {% for chemist in chemists %}
+                                      <option  value="{{ chemist.pk }}">{{ chemist.shopname }}  </option>
+                                        {% endfor %}
+                                       </select>
+                            </div>
+                             <button type="submit" class="form-control btn-primary">Submit</button>
+                             </form>
+                {% endif %}
+				<h8>Quantity : {{medicine.quantity}}</h8><br />
+                <h8>For {{medicine.fordays}} days</h8><br />
+				<h8>Daily: {{medicine.dailytime}} times</h8><br />
+                <h8>Quantity of {{medicine.eachdosequantity}} in each dose</h8><br />
+				{% if user == "P" and medicine.status == 1 %}
+                             <h8>Chemist : {{medicine.chemist.shopname}}</h8><br>
+                             <h8>Chemist Address : {{medicine.chemist.address}}</h8><br>
+                {% endif %}
+			  </div>
+			</a>
+			<hr style="height: 5px" />
+			{% endfor %}
+		  </div>
+		</div>
+	  </div>
+<!--  -->
+<!--JS Library -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" ></script>
+</body>
+</html>
